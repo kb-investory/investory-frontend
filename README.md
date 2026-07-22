@@ -152,3 +152,7 @@ Page/Component → Pinia Store → Service → Mock 또는 실제 API
 4. 프로덕션 빌드
 
 `main` 브랜치에 push되면 빌드 결과물을 GitHub Actions artifact로 생성하고 설정된 VM으로 배포합니다.
+
+## UI Kit 확인
+
+현재 홈(`/`)은 공통 컴포넌트 전체를 확인하는 UI Kit 화면으로 연결되어 있습니다. `/ui-kit` 주소에서도 같은 화면을 확인할 수 있습니다.

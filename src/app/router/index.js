@@ -4,7 +4,6 @@ import { setupRouterGuards } from '@/app/router/guards'
 import { ROUTE_NAMES } from '@/app/router/route-names'
 import { aiConversationRoutes } from '@/modules/ai-conversation/routes'
 import { authRoutes } from '@/modules/auth/routes'
-import { homeRoutes } from '@/modules/home/routes'
 import { journalRoutes } from '@/modules/journal/routes'
 import { mypageRoutes } from '@/modules/mypage/routes'
 import { portfolioRoutes } from '@/modules/portfolio/routes'
@@ -12,7 +11,12 @@ import { portfolioRoutes } from '@/modules/portfolio/routes'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    ...homeRoutes,
+    {
+      path: '/',
+      name: ROUTE_NAMES.HOME,
+      component: () => import('@/app/views/UIKitView.vue'),
+      meta: { title: 'UI Kit' },
+    },
     ...authRoutes,
     ...portfolioRoutes,
     ...mypageRoutes,
