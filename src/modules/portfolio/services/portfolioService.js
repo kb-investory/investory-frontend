@@ -1,5 +1,24 @@
-import { portfolioMock } from '@/modules/portfolio/mocks/portfolioMock'
+import {
+  portfolioAnalysisMock,
+  portfolioMock,
+  stockAnalysisMocks,
+} from '@/modules/portfolio/mocks/portfolioMock'
+
+export async function getPortfolioHoldings() {
+  return structuredClone(portfolioMock)
+}
 
 export async function getPortfolios() {
-  return structuredClone(portfolioMock)
+  const { holdings } = await getPortfolioHoldings()
+  return holdings
+}
+
+export async function getPortfolioAnalysis() {
+  return structuredClone(portfolioAnalysisMock)
+}
+
+export async function getStockAnalysis(stockId) {
+  return structuredClone(
+    stockAnalysisMocks.find((stock) => stock.stockId === Number(stockId)) ?? null,
+  )
 }

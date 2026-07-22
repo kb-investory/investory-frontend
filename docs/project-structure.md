@@ -12,6 +12,9 @@ src/
 ├─ shared/                 # 도메인에 종속되지 않는 공통 코드
 │  ├─ api/
 │  ├─ components/
+│  ├─ mocks/               # 증권사·종목 등 공통 목 데이터
+│  ├─ services/            # 공통 목 API 접근
+│  ├─ stores/              # 공통 데이터용 Pinia 상태
 │  └─ styles/
 ├─ modules/                # 기능별 독립 모듈
 │  ├─ auth/
@@ -47,6 +50,7 @@ Page/Component → Pinia Store → Service → Mock 또는 실제 API
 - Store는 상태와 사용자 액션 흐름을 관리합니다.
 - Service는 데이터 출처를 감추며, 실제 API 도입 시 이 계층을 교체합니다.
 - Mock은 서버 응답 형태에 맞춘 원본 fixture만 제공합니다.
+- 증권사·종목처럼 여러 모듈에서 공유하는 기준 데이터는 `shared`에서 같은 흐름으로 관리합니다.
 
 `portfolio` 모듈은 로딩과 오류 상태까지 포함한 기본 참고 구현입니다.
 

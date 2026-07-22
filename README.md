@@ -82,6 +82,9 @@ src/
 ├─ shared/                      # 특정 도메인에 종속되지 않는 공통 코드
 │  ├─ api/                      # 공통 API 클라이언트
 │  ├─ components/               # BaseButton 등 공통 UI
+│  ├─ mocks/                    # 여러 기능이 공유하는 증권사·종목 목 데이터
+│  ├─ services/                 # 공통 목 API 접근 함수
+│  ├─ stores/                   # 공통 데이터용 Pinia 상태와 액션
 │  └─ styles/                   # 전역 스타일과 CSS 변수
 ├─ modules/                     # 기능별 독립 모듈
 │  ├─ auth/                     # 인증
@@ -112,6 +115,9 @@ modules/{domain}/
 ```text
 Page/Component → Pinia Store → Service → Mock 또는 실제 API
 ```
+
+증권사와 종목처럼 여러 기능에서 함께 사용하는 기준 데이터는 `shared`의 동일한 흐름을
+사용합니다. 특정 기능에만 속하는 데이터는 해당 `modules/{domain}` 내부에서 관리합니다.
 
 - 컴포넌트에서 목업 데이터를 직접 가져오지 않습니다.
 - Store는 상태와 사용자 액션 흐름을 관리합니다.
