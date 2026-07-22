@@ -3,3 +3,4 @@ dist
 coverage
 package-lock.json
 docs/coding-convention.md
+docs/DB_스키마.md

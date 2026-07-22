@@ -1,0 +1,25 @@
+@import './base.css';
+
+.page-section {
+  display: grid;
+  gap: 16px;
+}
+
+.page-section h1,
+.page-section p {
+  margin: 0;
+}
+
+.eyebrow {
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
