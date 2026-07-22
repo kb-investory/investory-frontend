@@ -6,5 +6,6 @@ export const ROUTE_NAMES = Object.freeze({
   JOURNAL: 'journal',
   JOURNAL_CREATE: 'journal-create',
   AI_CONVERSATION: 'ai-conversation',
+  UI_KIT: 'ui-kit',
   NOT_FOUND: 'not-found',
 })

@@ -140,6 +140,7 @@ Page/Component → Pinia Store → Service → Mock 또는 실제 API
 
 - [코딩 및 Git 컨벤션](./docs/coding-convention.md)
 - [프로젝트 디렉터리 구조](./docs/project-structure.md)
+- [공통 UI 컴포넌트](./docs/ui-components.md)
 
 ## CI/CD
 

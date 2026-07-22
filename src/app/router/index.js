@@ -19,6 +19,12 @@ const router = createRouter({
     ...journalRoutes,
     ...aiConversationRoutes,
     {
+      path: '/ui-kit',
+      name: ROUTE_NAMES.UI_KIT,
+      component: () => import('@/app/views/UIKitView.vue'),
+      meta: { title: 'UI Kit' },
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: ROUTE_NAMES.NOT_FOUND,
       component: () => import('@/app/views/NotFoundView.vue'),
