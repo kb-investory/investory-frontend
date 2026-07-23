@@ -2,12 +2,48 @@ import { journalMock } from '@/modules/journal/mocks/journalMock'
 
 let journals = structuredClone(journalMock)
 
-export async function getJournals({ stockId, period } = {}) {
+export async function getJournals({ stockId, period, query, cursor, limit, withPagination = false } = {}) {
+  const searchKeyword = query?.trim().toLowerCase()
+
   const filteredJournals = journals.filter((journal) => {
     if (stockId && journal.stockId !== Number(stockId)) return false
     if (period && !journal.tradeDate.startsWith(period)) return false
+    if (searchKeyword) {
+      const matchStock = journal.stock?.toLowerCase().includes(searchKeyword)
+      const matchTitle = journal.title?.toLowerCase().includes(searchKeyword)
+      const matchContent = (journal.content || journal.judgment)?.toLowerCase().includes(searchKeyword)
+      const matchReasons = journal.reasons?.some((r) => r.toLowerCase().includes(searchKeyword))
+      if (!matchStock && !matchTitle && !matchContent && !matchReasons) return false
+    }
     return true
   })
+
+  // Sort descending by date & creation time
+  filteredJournals.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+
+  if (withPagination || cursor !== undefined || limit !== undefined) {
+    const pageLimit = limit ? Number(limit) : 5
+    let startIndex = 0
+
+    if (cursor !== undefined && cursor !== null) {
+      const foundIndex = filteredJournals.findIndex((j) => j.journalId === Number(cursor))
+      if (foundIndex >= 0) {
+        startIndex = foundIndex + 1
+      }
+    }
+
+    const items = filteredJournals.slice(startIndex, startIndex + pageLimit)
+    const nextItem = filteredJournals[startIndex + pageLimit]
+    const nextCursor = nextItem ? nextItem.journalId : null
+    const hasMore = startIndex + pageLimit < filteredJournals.length
+
+    return {
+      items: structuredClone(items),
+      nextCursor,
+      hasMore,
+      totalCount: filteredJournals.length,
+    }
+  }
 
   return structuredClone(filteredJournals)
 }
