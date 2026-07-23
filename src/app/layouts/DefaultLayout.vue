@@ -6,69 +6,109 @@ import { ROUTE_NAMES } from '@/app/router/route-names'
 
 <template>
   <div class="app-layout">
-    <header class="app-header">
-      <RouterLink class="brand" :to="{ name: ROUTE_NAMES.HOME }">Investory</RouterLink>
+    <div class="mobile-container">
+      <header class="app-header">
+        <div class="header-brand-row">
+          <RouterLink class="brand" :to="{ name: ROUTE_NAMES.HOME }">Investory</RouterLink>
+        </div>
 
-      <nav class="navigation" aria-label="주요 메뉴">
-        <RouterLink :to="{ name: ROUTE_NAMES.PORTFOLIO }">포트폴리오</RouterLink>
-        <RouterLink :to="{ name: ROUTE_NAMES.JOURNAL }">투자일지</RouterLink>
-        <RouterLink :to="{ name: ROUTE_NAMES.AI_CONVERSATION }">AI 대화</RouterLink>
-        <RouterLink :to="{ name: ROUTE_NAMES.MYPAGE }">마이페이지</RouterLink>
-      </nav>
-    </header>
+        <nav class="navigation" aria-label="주요 메뉴">
+          <RouterLink :to="{ name: ROUTE_NAMES.PORTFOLIO }">포트폴리오</RouterLink>
+          <RouterLink :to="{ name: ROUTE_NAMES.JOURNAL }">투자일지</RouterLink>
+          <RouterLink :to="{ name: ROUTE_NAMES.AI_CONVERSATION }">AI 대화</RouterLink>
+          <RouterLink :to="{ name: ROUTE_NAMES.MYPAGE }">마이페이지</RouterLink>
+        </nav>
+      </header>
 
-    <main class="app-main">
-      <RouterView />
-    </main>
+      <main class="app-main">
+        <RouterView />
+      </main>
+    </div>
   </div>
 </template>
 
 <style scoped>
 .app-layout {
   min-height: 100vh;
+  background-color: #f2f2f5;
+  display: flex;
+  justify-content: center;
+}
+
+.mobile-container {
+  width: 100%;
+  max-width: 480px;
+  min-height: 100vh;
+  background-color: #ffffff;
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
 }
 
 .app-header {
   display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--color-border);
+  background: #ffffff;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-brand-row {
+  display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
-  padding: 20px 32px;
-  border-bottom: 1px solid var(--color-border);
 }
 
 .brand {
   color: var(--color-heading);
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
 }
 
 .navigation {
   display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .navigation a {
   color: var(--color-text-muted);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: all 0.15s ease;
 }
 
 .navigation a.router-link-active {
-  color: var(--color-primary);
-  font-weight: 600;
+  color: #111111;
+  font-weight: 700;
+  background-color: #f4f4f1;
 }
 
 .app-main {
-  width: min(1120px, calc(100% - 40px));
-  margin: 0 auto;
-  padding: 48px 0;
+  flex: 1;
+  width: 100%;
+  padding: 20px 16px 32px;
 }
 
-@media (max-width: 720px) {
-  .app-header {
-    align-items: flex-start;
-    flex-direction: column;
-    padding: 20px;
+@media (max-width: 480px) {
+  .app-layout {
+    background-color: #ffffff;
+  }
+
+  .mobile-container {
+    box-shadow: none;
   }
 }
 </style>
