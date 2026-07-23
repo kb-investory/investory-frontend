@@ -10,10 +10,17 @@
   --color-primary-soft: #fff2bd;
   --color-primary-subtle: #fff9e7;
   --color-primary-strong: #a77900;
+  --color-success: #18864b;
+  --color-success-soft: #eaf8ef;
   --color-danger: #e34b4b;
+  --color-danger-soft: #fff0f0;
   --color-border: #e5e5e0;
   --color-border-subtle: #eeeeea;
+  --color-brand-naver: #03c75a;
+  --color-brand-kakao: #fee500;
+  --color-brand-google: #4285f4;
   --font-sans: 'Noto Sans KR', system-ui, sans-serif;
+  --font-brand: Inter, system-ui, sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, monospace;
 
   color: var(--color-text);

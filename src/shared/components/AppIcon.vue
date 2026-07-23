@@ -7,15 +7,21 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  CircleCheck,
   Ellipsis,
   History,
   House,
+  LoaderCircle,
   Lock,
+  LockKeyhole,
+  MessageCircle,
   Notebook,
   Plus,
   Search,
   Settings,
+  ShieldCheck,
   Sparkles,
+  TriangleAlert,
 } from '@lucide/vue'
 
 const iconComponents = {
@@ -26,15 +32,21 @@ const iconComponents = {
   'chevron-down': ChevronDown,
   'chevron-left': ChevronLeft,
   'chevron-right': ChevronRight,
+  'circle-check': CircleCheck,
   ellipsis: Ellipsis,
   history: History,
   home: House,
+  'loader-circle': LoaderCircle,
   lock: Lock,
+  'lock-keyhole': LockKeyhole,
+  'message-circle': MessageCircle,
   notebook: Notebook,
   plus: Plus,
   search: Search,
   settings: Settings,
+  'shield-check': ShieldCheck,
   sparkles: Sparkles,
+  'triangle-alert': TriangleAlert,
 }
 
 defineProps({

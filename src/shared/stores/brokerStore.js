@@ -9,6 +9,7 @@ import {
 
 export const useBrokerStore = defineStore('broker', () => {
   const providers = ref([])
+  const selectedProvider = ref(null)
   const selectedConnection = ref(null)
   const loading = ref(false)
   const error = ref(null)
@@ -29,6 +30,18 @@ export const useBrokerStore = defineStore('broker', () => {
     }
   }
 
+  function selectBroker(provider) {
+    if (!provider?.active) {
+      return
+    }
+
+    selectedProvider.value = provider
+  }
+
+  function clearSelectedBroker() {
+    selectedProvider.value = null
+  }
+
   async function connectBroker(payload) {
     const response = await createBrokerConnection(payload)
 
@@ -46,10 +59,13 @@ export const useBrokerStore = defineStore('broker', () => {
 
   return {
     providers,
+    selectedProvider,
     selectedConnection,
     loading,
     error,
     fetchBrokers,
+    selectBroker,
+    clearSelectedBroker,
     connectBroker,
     fetchConnection,
   }
