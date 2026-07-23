@@ -4,7 +4,7 @@ export const journalRoutes = [
   {
     path: '/journal',
     name: ROUTE_NAMES.JOURNAL,
-    component: () => import('@/modules/journal/pages/JournalListPage.vue'),
+    component: () => import('@/modules/journal/pages/JournalTimelineListPage.vue'),
     meta: { title: '투자일지 - 타임라인', requiresAuth: true },
   },
   {
