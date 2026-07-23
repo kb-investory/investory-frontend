@@ -1,7 +1,7 @@
 <!-- 
   [컴포넌트] 투자일지 상세 정보 모달
   - 사용 위치: JournalTimelineListPage.vue (타임라인 목록에서 항목 클릭 시 팝업)
-  - 주요 기능: 명세 디자인 시안 100% 동일 구현 - journalStore.formatJournalDetail()을 활용하여 데이터 바인딩 최적화
+  - 주요 기능: journalStore.activeJournalDetail 전역 상태를 직접 구독하여 렌더링 (하드코딩 Fallback 완전 제거)
 -->
 <script setup>
 import { computed } from 'vue'
@@ -11,14 +11,10 @@ import { ROUTE_NAMES } from '@/app/router/route-names'
 import { useJournalStore } from '@/modules/journal/stores/journalStore'
 import AppIcon from '@/shared/components/AppIcon.vue'
 
-const props = defineProps({
+defineProps({
   isOpen: {
     type: Boolean,
     default: false,
-  },
-  journal: {
-    type: Object,
-    default: null,
   },
 })
 
@@ -27,51 +23,51 @@ const emit = defineEmits(['close'])
 const router = useRouter()
 const journalStore = useJournalStore()
 
-// Store의 포맷팅 메서드를 활용해 깔끔한 단일 렌더링 객체 생성
-const detail = computed(() => journalStore.formatJournalDetail(props.journal))
+// 전역 스토어 상태를 직접 구독 (하드코딩 fallback 100% 제거)
+const detail = computed(() => journalStore.activeJournalDetail)
 
-function handleGoToAiConversation() {
-  router.push({ name: ROUTE_NAMES.AI_CONVERSATION })
+function handleClose() {
+  journalStore.closeJournalDetail()
   emit('close')
 }
 
+function handleGoToAiConversation() {
+  router.push({ name: ROUTE_NAMES.AI_CONVERSATION })
+  handleClose()
+}
+
 function handleGoToEdit() {
-  if (props.journal) {
+  if (detail.value) {
     router.push({
       name: ROUTE_NAMES.JOURNAL_CREATE,
-      query: { editId: props.journal.journalId },
+      query: { editId: detail.value.journalId || detail.value.id },
     })
-    emit('close')
+    handleClose()
   }
 }
 
 function handleGoToStockRecords() {
   router.push({ name: ROUTE_NAMES.JOURNAL_STOCK_LIST })
-  emit('close')
+  handleClose()
 }
 </script>
 
 <template>
   <Teleport to="body">
-    <div v-if="isOpen && detail" class="modal-backdrop" @click.self="$emit('close')">
+    <div v-if="isOpen && detail" class="modal-backdrop" @click.self="handleClose">
       <div class="journal-detail-sheet" role="dialog" aria-modal="true">
-        <!-- 1. 최상단 서브 헤더 (투자 일지 배지 & 닫기 버튼) -->
+        <!-- 1. 최상단 서브 헤더 -->
         <div class="sheet-top-bar">
           <div class="journal-tag-badge">
             <AppIcon name="notebook-tabs" :size="14" />
             <span>투자 일지</span>
           </div>
-          <button
-            type="button"
-            class="sheet-close-btn"
-            aria-label="모달 닫기"
-            @click="$emit('close')"
-          >
+          <button type="button" class="sheet-close-btn" aria-label="모달 닫기" @click="handleClose">
             <AppIcon name="x" :size="20" />
           </button>
         </div>
 
-        <!-- 스크롤 가능 영역 -->
+        <!-- 스크롤 가능 본문 영역 -->
         <div class="sheet-scroll-content">
           <!-- 2. 종목명 및 시각 메타 -->
           <div class="stock-meta-row">
@@ -83,7 +79,7 @@ function handleGoToStockRecords() {
           <!-- 3. 일지 대형 제목 -->
           <h2 class="journal-main-title">{{ detail.title }}</h2>
 
-          <!-- 4. 거래 메타 칩 (매수, 수량, 평단가, 수익률) -->
+          <!-- 4. 거래 메타 칩 (매수/매도, 수량, 평단가, 수익률) -->
           <div class="meta-chips-row">
             <span class="meta-chip meta-chip--action">{{ detail.actionTypeLabel }}</span>
             <span class="meta-chip meta-chip--gray font-mono"
@@ -101,7 +97,7 @@ function handleGoToStockRecords() {
           </div>
 
           <!-- 5. 핵심 판단 카드 (노란 박스) -->
-          <section class="judgment-card">
+          <section v-if="detail.judgmentText" class="judgment-card">
             <div class="judgment-card__header">
               <AppIcon name="lightbulb" :size="16" class="bulb-icon" />
               <span>핵심 판단</span>
@@ -112,7 +108,10 @@ function handleGoToStockRecords() {
           </section>
 
           <!-- 6. 판단 근거 (체크리스트) -->
-          <section class="reasons-section">
+          <section
+            v-if="detail.reasonsList && detail.reasonsList.length > 0"
+            class="reasons-section"
+          >
             <div class="reasons-header">
               <h3 class="reasons-title">판단 근거</h3>
               <button type="button" class="ai-report-badge" @click="handleGoToAiConversation">
@@ -132,7 +131,11 @@ function handleGoToStockRecords() {
           </section>
 
           <!-- 7. 연결된 AI 대화 카드 -->
-          <section class="ai-conv-card" @click="handleGoToAiConversation">
+          <section
+            v-if="detail.sourceConversationId"
+            class="ai-conv-card"
+            @click="handleGoToAiConversation"
+          >
             <div class="ai-conv-card__icon-box">
               <AppIcon name="sparkles" :size="18" />
             </div>
@@ -144,10 +147,12 @@ function handleGoToStockRecords() {
           </section>
 
           <!-- 8. 복기 메모 -->
-          <section class="review-memo-section">
+          <section v-if="detail.reviewMemoText" class="review-memo-section">
             <div class="review-memo-header">
               <h3 class="review-memo-title">복기 메모</h3>
-              <span class="review-memo-date font-mono">{{ detail.reviewDateText }}</span>
+              <span v-if="detail.reviewDateText" class="review-memo-date font-mono">{{
+                detail.reviewDateText
+              }}</span>
             </div>
             <p class="review-memo-body">
               {{ detail.reviewMemoText }}
@@ -155,7 +160,7 @@ function handleGoToStockRecords() {
           </section>
         </div>
 
-        <!-- 9. 하단 버튼 영역 (수정 & 종목 전체 기록 보기) -->
+        <!-- 9. 하단 액션 버튼 (수정 & 종목 전체 기록 보기) -->
         <div class="sheet-bottom-actions">
           <button type="button" class="btn-action-edit" @click="handleGoToEdit">
             <span>수정</span>

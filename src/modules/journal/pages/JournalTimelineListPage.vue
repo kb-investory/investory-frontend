@@ -2,10 +2,10 @@
   [페이지 컴포넌트] 투자일지 - 타임라인 목록 페이지
   - 경로: /journal
   - 사용 위치: 주 메뉴 '투자일지' 탭 진입 시 기본 렌더링되는 메인 화면
-  - 주요 기능: 월 선택 모달, 월간 실적 요약, 날짜별 타임라인 목록(TimelineItem), 커서 페이징 더보기, 일지 상세 모달(JournalDetailModal) 연동
+  - 주요 기능: 월 선택 모달, 월간 실적 요약, 날짜별 타임라인 목록(TimelineItem), 커서 페이징 더보기, 일지 상세 모달(JournalDetailModal) 스토어 통합 연동
 -->
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { ROUTE_NAMES } from '@/app/router/route-names'
@@ -22,13 +22,20 @@ const journalStore = useJournalStore()
 
 const isMonthPickerOpen = ref(false)
 
-const selectedJournalForModal = computed(() => {
-  const qId = route.query.journalId
-  if (!qId) return null
-  return journalStore.journals.find((j) => j.journalId === Number(qId)) || null
-})
+// URL 쿼리 파라미터(?journalId=101)와 journalStore.selectedJournalId 양방향 동기화
+watch(
+  () => route.query.journalId,
+  (qId) => {
+    if (qId) {
+      journalStore.openJournalDetail(qId)
+    } else {
+      journalStore.closeJournalDetail()
+    }
+  },
+  { immediate: true },
+)
 
-const isDetailModalOpen = computed(() => !!selectedJournalForModal.value)
+const isDetailModalOpen = computed(() => !!journalStore.activeJournalDetail)
 
 const formattedMonthLabel = computed(() => {
   const period = journalStore.selectedPeriod || '2026-07'
@@ -58,7 +65,7 @@ function handleItemClick(item) {
   router.push({
     query: {
       ...route.query,
-      journalId: item.journalId,
+      journalId: item.journalId || item.id,
     },
   })
 }
@@ -166,7 +173,7 @@ function goToStockList() {
               <div class="date-group__items">
                 <TimelineItem
                   v-for="(item, idx) in group.items"
-                  :key="item.journalId"
+                  :key="item.journalId || item.id"
                   :item="item"
                   :is-last="idx === group.items.length - 1"
                   @click="handleItemClick"
@@ -212,11 +219,7 @@ function goToStockList() {
     />
 
     <!-- 일지 상세 모달 -->
-    <JournalDetailModal
-      :is-open="isDetailModalOpen"
-      :journal="selectedJournalForModal"
-      @close="handleCloseDetailModal"
-    />
+    <JournalDetailModal :is-open="isDetailModalOpen" @close="handleCloseDetailModal" />
   </div>
 </template>
 

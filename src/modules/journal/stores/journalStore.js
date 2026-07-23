@@ -1,7 +1,7 @@
 /**
  * [Pinia Store] 투자일지 전역 상태 관리 스토어
  * - 사용 위치: JournalTimelineListPage, JournalStockListPage 등 모듈 전반
- * - 주요 기능: 타임라인 목록, 종목 요약 데이터, 검색어 디바운싱, 날짜별 그룹화, 월간 요약 집계
+ * - 주요 기능: 타임라인 목록, 종목 요약 데이터, 검색어 디바운싱, 날짜별 그룹화, 월간 요약 집계, 상세 모달 전역 상태(activeJournalDetail) 관리
  */
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
@@ -23,6 +23,9 @@ export const useJournalStore = defineStore('journal', () => {
   const allMonthlyJournals = ref([])
   const selectedJournal = ref(null)
   const selectedVersion = ref(null)
+
+  // 모달 연동 전역 일지 ID 상태
+  const selectedJournalId = ref(null)
 
   const stockSummaries = ref([])
   const unheldStocks = ref([])
@@ -59,65 +62,54 @@ export const useJournalStore = defineStore('journal', () => {
     selectedGroup.value = groupName
   }
 
-  async function fetchStockData() {
-    stockSummaries.value = await getStockSummaries()
-    unheldStocks.value = await getUnheldStocks()
+  function openJournalDetail(id) {
+    selectedJournalId.value = Number(id)
   }
 
-  function formatJournalDetail(journal) {
-    if (!journal) return null
+  function closeJournalDetail() {
+    selectedJournalId.value = null
+  }
 
-    const unitPrice = journal.unitPrice ?? 78500
-    const quantity = journal.quantity ?? 20
-    const returnRate = journal.returnRate ?? 8.24
+  // 스토어에서 직접 구독 및 관리하는 상세 모달 뷰 데이터 (하드코딩 기본값 100% 제거)
+  const activeJournalDetail = computed(() => {
+    if (!selectedJournalId.value) return null
+    const target = journals.value.find(
+      (j) => j.journalId === selectedJournalId.value || j.id === selectedJournalId.value,
+    )
+    if (!target) return null
+
+    const unitPrice = target.unitPrice ?? 0
+    const quantity = target.quantity ?? 0
+    const returnRate = target.returnRate ?? 0
     const isPositiveReturn = returnRate >= 0
 
-    const act = journal.investmentAction || journal.type || 'BUY'
+    const act = target.investmentAction || target.type || 'BUY'
     let actionTypeLabel = '매수'
     if (act === 'SELL' || act === '매도') actionTypeLabel = '매도'
     if (act === 'HOLD' || act === '추가 의견') actionTypeLabel = '추가 의견'
 
-    const dateStr =
-      journal.tradeDate || journal.date || journal.createdAt?.split('T')[0] || '2025. 07. 18'
-    const timeStr = journal.time || ''
-    const tradeDateTime = timeStr ? `${dateStr} ${timeStr}` : dateStr
-
-    const judgmentText =
-      journal.judgment ||
-      journal.content ||
-      '실적 기대치 상향 흐름은 유효하지만 선반영 가능성을 고려해 목표 비중의 50%만 먼저 매수했다.'
-
-    const reasonsList =
-      journal.reasons && journal.reasons.length > 0
-        ? journal.reasons
-        : [
-            '분할 매수 기준을 먼저 정한 접근은 합리적이다.',
-            '2분기 실적 기대치 상향 흐름이 이어지고 있다.',
-            '기대 실적이 주가에 선반영됐을 가능성은 확인이 필요하다.',
-          ]
-
-    const reviewMemoText =
-      journal.reviewMemo ||
-      journal.reviewCondition ||
-      '계획한 비중을 지켜 변동성에 대응할 여유가 생겼다. 추가 매수는 실적 발표 후 수급을 확인하고 판단한다.'
-
-    const reviewDateText = journal.reviewDate || '07. 25'
+    const tradeDateTime = target.tradeDate || target.date || target.createdAt?.split('T')[0] || ''
 
     return {
-      ...journal,
-      title: journal.title || '1차 분할 매수',
-      stock: journal.stock || '삼성전자',
+      ...target,
+      title: target.title,
+      stock: target.stock,
       formattedUnitPrice: unitPrice.toLocaleString(),
       formattedQuantity: quantity.toLocaleString(),
       formattedReturnRate: (returnRate > 0 ? '+' : '') + returnRate.toFixed(2) + '%',
       isPositiveReturn,
       actionTypeLabel,
       tradeDateTime,
-      judgmentText,
-      reasonsList,
-      reviewMemoText,
-      reviewDateText,
+      judgmentText: target.judgment || target.content || '',
+      reasonsList: target.reasons || [],
+      reviewMemoText: target.reviewMemo || target.reviewCondition || '',
+      reviewDateText: target.reviewDate || '',
     }
+  })
+
+  async function fetchStockData() {
+    stockSummaries.value = await getStockSummaries()
+    unheldStocks.value = await getUnheldStocks()
   }
 
   async function resetAndFetch() {
@@ -161,8 +153,11 @@ export const useJournalStore = defineStore('journal', () => {
       hasMore.value = res.hasMore
       totalCount.value = res.totalCount
     } finally {
-      isLoading.value = false
-      isLoadingMore.value = false
+      if (isInitial) {
+        isLoading.value = false
+      } else {
+        isLoadingMore.value = false
+      }
     }
   }
 
@@ -171,110 +166,100 @@ export const useJournalStore = defineStore('journal', () => {
     await fetchJournals({ isInitial: false })
   }
 
-  async function fetchJournal(journalId) {
-    selectedJournal.value = await getJournal(journalId)
+  async function fetchJournal(id) {
+    selectedJournal.value = await getJournal(id)
+    return selectedJournal.value
   }
 
-  async function fetchJournalVersion(journalId, journalVersionId) {
-    selectedVersion.value = await getJournalVersion(journalId, journalVersionId)
+  async function fetchJournalVersion(journalId, versionId) {
+    selectedVersion.value = await getJournalVersion(journalId, versionId)
+    return selectedVersion.value
   }
 
   async function addJournal(payload) {
-    const journal = await createJournal(payload)
+    const created = await createJournal(payload)
     await resetAndFetch()
-    return journal
+    return created
   }
 
-  async function editJournal(journalId, payload) {
-    const response = await updateJournal(journalId, payload)
+  async function editJournal(id, payload) {
+    const updated = await updateJournal(id, payload)
     await resetAndFetch()
-    return response
+    return updated
   }
 
   const unheldStockCount = computed(() => unheldStocks.value.length)
 
   const availableGroups = computed(() => {
-    const groupsSet = new Set(['전체'])
-    stockSummaries.value.forEach((item) => {
-      if (item.groupTag) groupsSet.add(item.groupTag)
+    const groups = new Set()
+    stockSummaries.value.forEach((stock) => {
+      if (stock.groupTheme) groups.add(stock.groupTheme)
     })
-    return Array.from(groupsSet)
+    return ['전체', ...Array.from(groups)]
   })
 
   const filteredStockSummaries = computed(() => {
-    const queryStr = debouncedQuery.value.trim().toLowerCase()
-    return stockSummaries.value.filter((item) => {
-      if (selectedGroup.value !== '전체' && item.groupTag !== selectedGroup.value) {
-        return false
-      }
-      if (queryStr) {
-        const matchName = item.stockName?.toLowerCase().includes(queryStr)
-        const matchTag = item.groupTag?.toLowerCase().includes(queryStr)
-        const matchJudgment = item.latestJudgment?.toLowerCase().includes(queryStr)
-        if (!matchName && !matchTag && !matchJudgment) return false
-      }
-      return true
-    })
+    if (selectedGroup.value === '전체') {
+      return stockSummaries.value
+    }
+    return stockSummaries.value.filter((stock) => stock.groupTheme === selectedGroup.value)
   })
 
   const monthlySummary = computed(() => {
-    const periodJournals = allMonthlyJournals.value
-    const count = periodJournals.length
-    if (count === 0) {
-      return {
-        monthLabel: `${Number(selectedPeriod.value.split('-')[1])}월`,
-        monthlyCount: 0,
-        monthlyReturnRate: 0,
-        formattedReturnRate: '0.00%',
-        returnRateTone: 'neutral',
-        additionalOpinionCount: 0,
+    const list = allMonthlyJournals.value || []
+    const monthlyCount = list.length
+
+    let additionalOpinionCount = 0
+    let totalReturnRate = 0
+    let rateCount = 0
+
+    list.forEach((item) => {
+      if (item.investmentAction === 'HOLD' || item.type === '추가 의견') {
+        additionalOpinionCount++
       }
-    }
+      if (item.returnRate !== undefined && item.returnRate !== null) {
+        totalReturnRate += item.returnRate
+        rateCount++
+      }
+    })
 
-    const additionalOpinionCount = periodJournals.filter(
-      (j) => j.investmentAction === 'HOLD' || j.type === '추가 의견',
-    ).length
-
-    const returnSum = periodJournals.reduce((acc, j) => acc + (j.returnRate ?? 0), 0)
-    const avgReturn = returnSum / count
-    const formatted = (avgReturn > 0 ? '+' : '') + avgReturn.toFixed(2) + '%'
-    const tone = avgReturn > 0 ? 'danger' : avgReturn < 0 ? 'primary' : 'neutral'
+    const avgReturnRate = rateCount > 0 ? totalReturnRate / rateCount : 0
+    const formattedReturnRate = (avgReturnRate > 0 ? '+' : '') + avgReturnRate.toFixed(2) + '%'
 
     return {
-      monthLabel: `${Number(selectedPeriod.value.split('-')[1])}월`,
-      monthlyCount: count,
-      monthlyReturnRate: avgReturn,
-      formattedReturnRate: formatted,
-      returnRateTone: tone,
+      monthlyCount,
+      monthlyReturnRate: avgReturnRate,
+      formattedReturnRate,
       additionalOpinionCount,
     }
   })
 
-  function formatTime(isoString) {
-    if (!isoString) return '00:00'
-    const date = new Date(isoString)
-    if (isNaN(date.getTime())) return '00:00'
-    const hours = String(date.getHours()).padStart(2, '0')
-    const minutes = String(date.getMinutes()).padStart(2, '0')
-    return `${hours}:${minutes}`
+  function formatDateLabel(dateStr) {
+    if (!dateStr) return ''
+    const dateObj = new Date(dateStr)
+    if (isNaN(dateObj.getTime())) return dateStr
+
+    const month = dateObj.getMonth() + 1
+    const day = dateObj.getDate()
+    const weekday = WEEKDAYS[dateObj.getDay()]
+    return `${month}월 ${day}일 · ${weekday}`
   }
 
-  function formatDateLabel(dateString) {
-    if (!dateString) return ''
-    const parts = dateString.split('-')
-    if (parts.length < 3) return dateString
-    const month = Number(parts[1])
-    const day = Number(parts[2])
-    const d = new Date(dateString)
-    const weekday = WEEKDAYS[d.getDay()] || ''
-    return `${month}월 ${day}일 · ${weekday}`
+  function formatTime(isoStr) {
+    if (!isoStr) return ''
+    const dateObj = new Date(isoStr)
+    if (isNaN(dateObj.getTime())) return ''
+
+    const hours = String(dateObj.getHours()).padStart(2, '0')
+    const minutes = String(dateObj.getMinutes()).padStart(2, '0')
+    return `${hours}:${minutes}`
   }
 
   const dateGroupedJournals = computed(() => {
     const groupsMap = new Map()
 
     journals.value.forEach((item) => {
-      const dateKey = item.tradeDate || item.createdAt.slice(0, 10)
+      const dateKey = item.tradeDate || item.createdAt?.split('T')[0] || '기타'
       if (!groupsMap.has(dateKey)) {
         groupsMap.set(dateKey, {
           date: dateKey,
@@ -300,7 +285,7 @@ export const useJournalStore = defineStore('journal', () => {
 
       groupsMap.get(dateKey).items.push({
         ...item,
-        time: formatTime(item.createdAt),
+        time: item.time || formatTime(item.createdAt),
         actionTypeLabel,
         actionType,
         formattedUnitPrice: (item.unitPrice ?? 0).toLocaleString(),
@@ -317,6 +302,8 @@ export const useJournalStore = defineStore('journal', () => {
     allMonthlyJournals,
     selectedJournal,
     selectedVersion,
+    selectedJournalId,
+    activeJournalDetail,
     selectedPeriod,
     searchQuery,
     debouncedQuery,
@@ -335,6 +322,8 @@ export const useJournalStore = defineStore('journal', () => {
     fetchStockData,
     monthlySummary,
     dateGroupedJournals,
+    openJournalDetail,
+    closeJournalDetail,
     setSearchQuery,
     setPeriod,
     fetchJournals,
@@ -343,6 +332,5 @@ export const useJournalStore = defineStore('journal', () => {
     fetchJournalVersion,
     addJournal,
     editJournal,
-    formatJournalDetail,
   }
 })
