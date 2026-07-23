@@ -41,12 +41,15 @@ function handleMonthSelect(period) {
 function goToCreate() {
   router.push({ name: ROUTE_NAMES.JOURNAL_CREATE })
 }
+
+function goToStockList() {
+  router.push({ name: ROUTE_NAMES.JOURNAL_STOCK_LIST })
+}
 </script>
 
 <template>
   <div class="journal-timeline-container">
     <div class="journal-timeline-card">
-      <!-- 타임라인 콘텐츠 -->
       <div class="timeline-content">
         <!-- 화면 헤더 -->
         <header class="timeline-header">
@@ -66,23 +69,12 @@ function goToCreate() {
 
         <!-- 보기 전환 (탭) -->
         <nav class="view-tabs" aria-label="보기 전환 메뉴">
-          <button
-            type="button"
-            class="tab-btn"
-            :class="{ 'tab-btn--active': journalStore.activeTab === 'timeline' }"
-            @click="journalStore.setActiveTab('timeline')"
-          >
+          <button type="button" class="tab-btn tab-btn--active">
             <span>타임라인</span>
-            <div v-if="journalStore.activeTab === 'timeline'" class="tab-indicator" />
+            <div class="tab-indicator" />
           </button>
-          <button
-            type="button"
-            class="tab-btn"
-            :class="{ 'tab-btn--active': journalStore.activeTab === 'stock' }"
-            @click="journalStore.setActiveTab('stock')"
-          >
+          <button type="button" class="tab-btn" @click="goToStockList">
             <span>종목별</span>
-            <div v-if="journalStore.activeTab === 'stock'" class="tab-indicator" />
           </button>
         </nav>
 
@@ -125,58 +117,30 @@ function goToCreate() {
           </div>
         </section>
 
-        <!-- 날짜별 / 종목별 타임라인 목록 -->
+        <!-- 날짜별 타임라인 목록 -->
         <main class="timeline-list">
           <div v-if="journalStore.isLoading" class="state-message">일지를 불러오는 중입니다...</div>
 
           <template v-else-if="journalStore.journals.length > 0">
-            <!-- 타임라인 탭 -->
-            <template v-if="journalStore.activeTab === 'timeline'">
-              <section
-                v-for="group in journalStore.dateGroupedJournals"
-                :key="group.date"
-                class="date-group"
-              >
-                <!-- 날짜 헤더 -->
-                <header class="date-group__header">
-                  <span class="date-group__title">{{ group.dateLabel }}</span>
-                  <span class="date-group__count">{{ group.items.length }}개 일지</span>
-                </header>
+            <section
+              v-for="group in journalStore.dateGroupedJournals"
+              :key="group.date"
+              class="date-group"
+            >
+              <header class="date-group__header">
+                <span class="date-group__title">{{ group.dateLabel }}</span>
+                <span class="date-group__count">{{ group.items.length }}개 일지</span>
+              </header>
 
-                <!-- 날짜 그룹 내 일지 목록 -->
-                <div class="date-group__items">
-                  <TimelineItem
-                    v-for="(item, idx) in group.items"
-                    :key="item.journalId"
-                    :item="item"
-                    :is-last="idx === group.items.length - 1"
-                  />
-                </div>
-              </section>
-            </template>
-
-            <!-- 종목별 탭 -->
-            <template v-else>
-              <section
-                v-for="group in journalStore.stockGroupedJournals"
-                :key="group.stockName"
-                class="stock-group"
-              >
-                <header class="stock-group__header">
-                  <span class="stock-group__title">{{ group.stockName }}</span>
-                  <span class="stock-group__count">{{ group.items.length }}개 일지</span>
-                </header>
-
-                <div class="stock-group__items">
-                  <TimelineItem
-                    v-for="(item, idx) in group.items"
-                    :key="item.journalId"
-                    :item="item"
-                    :is-last="idx === group.items.length - 1"
-                  />
-                </div>
-              </section>
-            </template>
+              <div class="date-group__items">
+                <TimelineItem
+                  v-for="(item, idx) in group.items"
+                  :key="item.journalId"
+                  :item="item"
+                  :is-last="idx === group.items.length - 1"
+                />
+              </div>
+            </section>
 
             <!-- 더보기 버튼 -->
             <div v-if="journalStore.hasMore" class="load-more-section">
@@ -194,11 +158,10 @@ function goToCreate() {
             </div>
           </template>
 
-          <!-- 비어있는 상태 -->
           <div v-else class="state-message">등록된 투자 일지가 없습니다.</div>
         </main>
 
-        <!-- 일지 추가 액션 버튼 -->
+        <!-- 하단 일지 추가 액션 버튼 -->
         <footer class="action-footer">
           <button class="add-journal-fab" type="button" @click="goToCreate">
             <AppIcon name="plus" :size="18" />
@@ -393,15 +356,13 @@ function goToCreate() {
   text-align: center;
 }
 
-.date-group,
-.stock-group {
+.date-group {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.date-group__header,
-.stock-group__header {
+.date-group__header {
   display: flex;
   height: 28px;
   align-items: center;
@@ -412,22 +373,19 @@ function goToCreate() {
   flex-shrink: 0;
 }
 
-.date-group__title,
-.stock-group__title {
+.date-group__title {
   color: var(--color-heading);
   font-size: 13px;
   font-weight: 700;
 }
 
-.date-group__count,
-.stock-group__count {
+.date-group__count {
   color: var(--color-text-subtle);
   font-size: 10px;
   font-weight: 500;
 }
 
-.date-group__items,
-.stock-group__items {
+.date-group__items {
   display: flex;
   flex-direction: column;
   gap: 8px;
