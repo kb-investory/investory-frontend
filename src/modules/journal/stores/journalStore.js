@@ -64,6 +64,62 @@ export const useJournalStore = defineStore('journal', () => {
     unheldStocks.value = await getUnheldStocks()
   }
 
+  function formatJournalDetail(journal) {
+    if (!journal) return null
+
+    const unitPrice = journal.unitPrice ?? 78500
+    const quantity = journal.quantity ?? 20
+    const returnRate = journal.returnRate ?? 8.24
+    const isPositiveReturn = returnRate >= 0
+
+    const act = journal.investmentAction || journal.type || 'BUY'
+    let actionTypeLabel = '매수'
+    if (act === 'SELL' || act === '매도') actionTypeLabel = '매도'
+    if (act === 'HOLD' || act === '추가 의견') actionTypeLabel = '추가 의견'
+
+    const dateStr =
+      journal.tradeDate || journal.date || journal.createdAt?.split('T')[0] || '2025. 07. 18'
+    const timeStr = journal.time || ''
+    const tradeDateTime = timeStr ? `${dateStr} ${timeStr}` : dateStr
+
+    const judgmentText =
+      journal.judgment ||
+      journal.content ||
+      '실적 기대치 상향 흐름은 유효하지만 선반영 가능성을 고려해 목표 비중의 50%만 먼저 매수했다.'
+
+    const reasonsList =
+      journal.reasons && journal.reasons.length > 0
+        ? journal.reasons
+        : [
+            '분할 매수 기준을 먼저 정한 접근은 합리적이다.',
+            '2분기 실적 기대치 상향 흐름이 이어지고 있다.',
+            '기대 실적이 주가에 선반영됐을 가능성은 확인이 필요하다.',
+          ]
+
+    const reviewMemoText =
+      journal.reviewMemo ||
+      journal.reviewCondition ||
+      '계획한 비중을 지켜 변동성에 대응할 여유가 생겼다. 추가 매수는 실적 발표 후 수급을 확인하고 판단한다.'
+
+    const reviewDateText = journal.reviewDate || '07. 25'
+
+    return {
+      ...journal,
+      title: journal.title || '1차 분할 매수',
+      stock: journal.stock || '삼성전자',
+      formattedUnitPrice: unitPrice.toLocaleString(),
+      formattedQuantity: quantity.toLocaleString(),
+      formattedReturnRate: (returnRate > 0 ? '+' : '') + returnRate.toFixed(2) + '%',
+      isPositiveReturn,
+      actionTypeLabel,
+      tradeDateTime,
+      judgmentText,
+      reasonsList,
+      reviewMemoText,
+      reviewDateText,
+    }
+  }
+
   async function resetAndFetch() {
     cursor.value = null
     journals.value = []
@@ -283,10 +339,10 @@ export const useJournalStore = defineStore('journal', () => {
     setPeriod,
     fetchJournals,
     fetchNextJournals,
-    resetAndFetch,
     fetchJournal,
     fetchJournalVersion,
     addJournal,
     editJournal,
+    formatJournalDetail,
   }
 })

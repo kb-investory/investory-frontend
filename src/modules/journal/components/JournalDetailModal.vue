@@ -1,13 +1,14 @@
 <!-- 
   [컴포넌트] 투자일지 상세 정보 모달
   - 사용 위치: JournalTimelineListPage.vue (타임라인 목록에서 항목 클릭 시 팝업)
-  - 주요 기능: 명세 디자인 시안 100% 동일 구현 - 거래 정보 태그 칩(매수/20주/평단 78,500원/+8.24%), 핵심 판단 노란 카드, 판단 근거 체크리스트(AI 보고서 3개 배지), 연결된 AI 대화 카드, 복기 메모, 하단 수정 및 종목 전체 기록 보기 액션
+  - 주요 기능: 명세 디자인 시안 100% 동일 구현 - journalStore.formatJournalDetail()을 활용하여 데이터 바인딩 최적화
 -->
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { ROUTE_NAMES } from '@/app/router/route-names'
+import { useJournalStore } from '@/modules/journal/stores/journalStore'
 import AppIcon from '@/shared/components/AppIcon.vue'
 
 const props = defineProps({
@@ -24,91 +25,10 @@ const props = defineProps({
 const emit = defineEmits(['close'])
 
 const router = useRouter()
+const journalStore = useJournalStore()
 
-const formattedUnitPrice = computed(() => {
-  if (!props.journal || props.journal.unitPrice === undefined) return '78,500'
-  return props.journal.unitPrice.toLocaleString()
-})
-
-const formattedQuantity = computed(() => {
-  if (!props.journal || props.journal.quantity === undefined) return '20'
-  return props.journal.quantity.toLocaleString()
-})
-
-const formattedReturnRate = computed(() => {
-  if (!props.journal || props.journal.returnRate === undefined) return '+8.24%'
-  const rate = props.journal.returnRate
-  return (rate > 0 ? '+' : '') + rate.toFixed(2) + '%'
-})
-
-const isPositiveReturn = computed(() => {
-  if (!props.journal || props.journal.returnRate === undefined) return true
-  return props.journal.returnRate >= 0
-})
-
-const actionTypeLabel = computed(() => {
-  if (!props.journal) return '매수'
-  const act = props.journal.investmentAction || props.journal.type || 'BUY'
-  if (act === 'SELL' || act === '매도') return '매도'
-  if (act === 'HOLD' || act === '추가 의견') return '추가 의견'
-  return '매수'
-})
-
-const journalTitle = computed(() => {
-  if (!props.journal) return '1차 분할 매수'
-  return props.journal.title || '1차 분할 매수'
-})
-
-const stockName = computed(() => {
-  if (!props.journal) return '삼성전자'
-  return props.journal.stock || '삼성전자'
-})
-
-const tradeDateTime = computed(() => {
-  if (!props.journal) return '2025. 07. 18 15:32'
-  if (props.journal.tradeDate) return props.journal.tradeDate
-  const dateStr = props.journal.date || props.journal.createdDate || '2025. 07. 18'
-  const timeStr = props.journal.time || ''
-  return timeStr ? `${dateStr} ${timeStr}` : dateStr
-})
-
-const judgmentText = computed(() => {
-  if (!props.journal) {
-    return '실적 기대치 상향 흐름은 유효하지만 선반영 가능성을 고려해 목표 비중의 50%만 먼저 매수했다.'
-  }
-  return (
-    props.journal.judgment ||
-    props.journal.content ||
-    '실적 기대치 상향 흐름은 유효하지만 선반영 가능성을 고려해 목표 비중의 50%만 먼저 매수했다.'
-  )
-})
-
-const reasonsList = computed(() => {
-  if (props.journal?.reasons && props.journal.reasons.length > 0) {
-    return props.journal.reasons
-  }
-  return [
-    '분할 매수 기준을 먼저 정한 접근은 합리적이다.',
-    '2분기 실적 기대치 상향 흐름이 이어지고 있다.',
-    '기대 실적이 주가에 선반영됐을 가능성은 확인이 필요하다.',
-  ]
-})
-
-const reviewMemoText = computed(() => {
-  if (!props.journal) {
-    return '계획한 비중을 지켜 변동성에 대응할 여유가 생겼다. 추가 매수는 실적 발표 후 수급을 확인하고 판단한다.'
-  }
-  return (
-    props.journal.reviewMemo ||
-    props.journal.reviewCondition ||
-    '계획한 비중을 지켜 변동성에 대응할 여유가 생겼다. 추가 매수는 실적 발표 후 수급을 확인하고 판단한다.'
-  )
-})
-
-const reviewDateText = computed(() => {
-  if (props.journal?.reviewDate) return props.journal.reviewDate
-  return '07. 25'
-})
+// Store의 포맷팅 메서드를 활용해 깔끔한 단일 렌더링 객체 생성
+const detail = computed(() => journalStore.formatJournalDetail(props.journal))
 
 function handleGoToAiConversation() {
   router.push({ name: ROUTE_NAMES.AI_CONVERSATION })
@@ -133,7 +53,7 @@ function handleGoToStockRecords() {
 
 <template>
   <Teleport to="body">
-    <div v-if="isOpen && journal" class="modal-backdrop" @click.self="$emit('close')">
+    <div v-if="isOpen && detail" class="modal-backdrop" @click.self="$emit('close')">
       <div class="journal-detail-sheet" role="dialog" aria-modal="true">
         <!-- 1. 최상단 서브 헤더 (투자 일지 배지 & 닫기 버튼) -->
         <div class="sheet-top-bar">
@@ -155,24 +75,28 @@ function handleGoToStockRecords() {
         <div class="sheet-scroll-content">
           <!-- 2. 종목명 및 시각 메타 -->
           <div class="stock-meta-row">
-            <span class="stock-meta-name">{{ stockName }}</span>
+            <span class="stock-meta-name">{{ detail.stock }}</span>
             <span class="stock-meta-dot">·</span>
-            <span class="stock-meta-time font-mono">{{ tradeDateTime }}</span>
+            <span class="stock-meta-time font-mono">{{ detail.tradeDateTime }}</span>
           </div>
 
           <!-- 3. 일지 대형 제목 -->
-          <h2 class="journal-main-title">{{ journalTitle }}</h2>
+          <h2 class="journal-main-title">{{ detail.title }}</h2>
 
           <!-- 4. 거래 메타 칩 (매수, 수량, 평단가, 수익률) -->
           <div class="meta-chips-row">
-            <span class="meta-chip meta-chip--action">{{ actionTypeLabel }}</span>
-            <span class="meta-chip meta-chip--gray font-mono">{{ formattedQuantity }}주</span>
-            <span class="meta-chip meta-chip--gray font-mono">평단 {{ formattedUnitPrice }}원</span>
+            <span class="meta-chip meta-chip--action">{{ detail.actionTypeLabel }}</span>
+            <span class="meta-chip meta-chip--gray font-mono"
+              >{{ detail.formattedQuantity }}주</span
+            >
+            <span class="meta-chip meta-chip--gray font-mono"
+              >평단 {{ detail.formattedUnitPrice }}원</span
+            >
             <span
               class="meta-chip font-mono"
-              :class="isPositiveReturn ? 'meta-chip--danger' : 'meta-chip--primary'"
+              :class="detail.isPositiveReturn ? 'meta-chip--danger' : 'meta-chip--primary'"
             >
-              {{ formattedReturnRate }}
+              {{ detail.formattedReturnRate }}
             </span>
           </div>
 
@@ -183,7 +107,7 @@ function handleGoToStockRecords() {
               <span>핵심 판단</span>
             </div>
             <p class="judgment-card__body">
-              {{ judgmentText }}
+              {{ detail.judgmentText }}
             </p>
           </section>
 
@@ -193,12 +117,12 @@ function handleGoToStockRecords() {
               <h3 class="reasons-title">판단 근거</h3>
               <button type="button" class="ai-report-badge" @click="handleGoToAiConversation">
                 <AppIcon name="sparkles" :size="13" />
-                <span>AI 보고서 3개</span>
+                <span>AI 보고서 {{ detail.reasonsList.length }}개</span>
               </button>
             </div>
 
             <ul class="reasons-checklist">
-              <li v-for="(reason, idx) in reasonsList" :key="idx" class="checklist-item">
+              <li v-for="(reason, idx) in detail.reasonsList" :key="idx" class="checklist-item">
                 <div class="check-box-icon">
                   <AppIcon name="check" :size="12" />
                 </div>
@@ -223,10 +147,10 @@ function handleGoToStockRecords() {
           <section class="review-memo-section">
             <div class="review-memo-header">
               <h3 class="review-memo-title">복기 메모</h3>
-              <span class="review-memo-date font-mono">{{ reviewDateText }}</span>
+              <span class="review-memo-date font-mono">{{ detail.reviewDateText }}</span>
             </div>
             <p class="review-memo-body">
-              {{ reviewMemoText }}
+              {{ detail.reviewMemoText }}
             </p>
           </section>
         </div>
@@ -237,7 +161,7 @@ function handleGoToStockRecords() {
             <span>수정</span>
           </button>
           <button type="button" class="btn-action-stock-records" @click="handleGoToStockRecords">
-            <span>{{ stockName }} 전체 기록 보기</span>
+            <span>{{ detail.stock }} 전체 기록 보기</span>
             <AppIcon name="arrow-right" :size="16" />
           </button>
         </div>
