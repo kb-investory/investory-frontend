@@ -1,6 +1,7 @@
 export const ROUTE_NAMES = Object.freeze({
   HOME: 'home',
   LOGIN: 'login',
+  OAUTH_CALLBACK: 'oauth-callback',
   PORTFOLIO: 'portfolio',
   MYPAGE: 'mypage',
   JOURNAL: 'journal',
