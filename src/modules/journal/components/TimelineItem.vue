@@ -14,6 +14,8 @@ defineProps({
     default: false,
   },
 })
+
+defineEmits(['click'])
 </script>
 
 <template>
@@ -32,8 +34,11 @@ defineProps({
       <div class="timeline-item__line" />
     </div>
 
-    <!-- 일지 내용 -->
-    <div class="timeline-item__content">
+    <!-- 일지 내용 (클릭 가능) -->
+    <div
+      class="timeline-item__content timeline-item__content--clickable"
+      @click="$emit('click', item)"
+    >
       <div class="timeline-item__meta">
         <span
           class="timeline-item__badge"
@@ -124,6 +129,10 @@ defineProps({
   gap: 4px;
   padding-bottom: 9px;
   border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.timeline-item__content--clickable {
+  cursor: pointer;
 }
 
 .timeline-item__meta {

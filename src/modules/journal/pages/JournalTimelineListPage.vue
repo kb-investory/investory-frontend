@@ -2,13 +2,14 @@
   [페이지 컴포넌트] 투자일지 - 타임라인 목록 페이지
   - 경로: /journal
   - 사용 위치: 주 메뉴 '투자일지' 탭 진입 시 기본 렌더링되는 메인 화면
-  - 주요 기능: 월 선택 모달, 월간 실적 요약, 날짜별 타임라인 목록(TimelineItem), 커서 페이징 더보기
+  - 주요 기능: 월 선택 모달, 월간 실적 요약, 날짜별 타임라인 목록(TimelineItem), 커서 페이징 더보기, 일지 상세 모달(JournalDetailModal) 연동
 -->
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import { ROUTE_NAMES } from '@/app/router/route-names'
+import JournalDetailModal from '@/modules/journal/components/JournalDetailModal.vue'
 import MonthPickerModal from '@/modules/journal/components/MonthPickerModal.vue'
 import TimelineItem from '@/modules/journal/components/TimelineItem.vue'
 import { useJournalStore } from '@/modules/journal/stores/journalStore'
@@ -16,9 +17,18 @@ import AppIcon from '@/shared/components/AppIcon.vue'
 import SearchInput from '@/shared/components/SearchInput.vue'
 
 const router = useRouter()
+const route = useRoute()
 const journalStore = useJournalStore()
 
 const isMonthPickerOpen = ref(false)
+
+const selectedJournalForModal = computed(() => {
+  const qId = route.query.journalId
+  if (!qId) return null
+  return journalStore.journals.find((j) => j.journalId === Number(qId)) || null
+})
+
+const isDetailModalOpen = computed(() => !!selectedJournalForModal.value)
 
 const formattedMonthLabel = computed(() => {
   const period = journalStore.selectedPeriod || '2026-07'
@@ -42,6 +52,21 @@ function handleSearchInput(value) {
 
 function handleMonthSelect(period) {
   journalStore.setPeriod(period)
+}
+
+function handleItemClick(item) {
+  router.push({
+    query: {
+      ...route.query,
+      journalId: item.journalId,
+    },
+  })
+}
+
+function handleCloseDetailModal() {
+  const query = { ...route.query }
+  delete query.journalId
+  router.push({ query })
 }
 
 function goToCreate() {
@@ -144,6 +169,7 @@ function goToStockList() {
                   :key="item.journalId"
                   :item="item"
                   :is-last="idx === group.items.length - 1"
+                  @click="handleItemClick"
                 />
               </div>
             </section>
@@ -183,6 +209,13 @@ function goToStockList() {
       :selected-period="journalStore.selectedPeriod"
       @close="isMonthPickerOpen = false"
       @select="handleMonthSelect"
+    />
+
+    <!-- 일지 상세 모달 -->
+    <JournalDetailModal
+      :is-open="isDetailModalOpen"
+      :journal="selectedJournalForModal"
+      @close="handleCloseDetailModal"
     />
   </div>
 </template>
