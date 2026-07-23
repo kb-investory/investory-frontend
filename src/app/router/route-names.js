@@ -7,6 +7,7 @@ export const ROUTE_NAMES = Object.freeze({
   PORTFOLIO: 'portfolio',
   MYPAGE: 'mypage',
   JOURNAL: 'journal',
+  JOURNAL_STOCK_LIST: 'journal-stock-list',
   JOURNAL_CREATE: 'journal-create',
   AI_CONVERSATION: 'ai-conversation',
   UI_KIT: 'ui-kit',

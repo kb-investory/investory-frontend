@@ -5,7 +5,13 @@ export const journalRoutes = [
     path: '/journal',
     name: ROUTE_NAMES.JOURNAL,
     component: () => import('@/modules/journal/pages/JournalListPage.vue'),
-    meta: { title: '투자일지', requiresAuth: true },
+    meta: { title: '투자일지 - 타임라인', requiresAuth: true },
+  },
+  {
+    path: '/journal/stocks',
+    name: ROUTE_NAMES.JOURNAL_STOCK_LIST,
+    component: () => import('@/modules/journal/pages/JournalStockListPage.vue'),
+    meta: { title: '투자일지 - 종목별', requiresAuth: true },
   },
   {
     path: '/journal/create',

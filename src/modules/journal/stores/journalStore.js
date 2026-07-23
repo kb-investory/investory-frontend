@@ -6,6 +6,8 @@ import {
   getJournal,
   getJournals,
   getJournalVersion,
+  getStockSummaries,
+  getUnheldStocks,
   updateJournal,
 } from '@/modules/journal/services/journalService'
 
@@ -17,8 +19,11 @@ export const useJournalStore = defineStore('journal', () => {
   const selectedJournal = ref(null)
   const selectedVersion = ref(null)
 
+  const stockSummaries = ref([])
+  const unheldStocks = ref([])
+  const selectedGroup = ref('전체')
+
   const selectedPeriod = ref('2026-07')
-  const activeTab = ref('timeline')
   const searchQuery = ref('')
   const debouncedQuery = ref('')
 
@@ -45,14 +50,20 @@ export const useJournalStore = defineStore('journal', () => {
     resetAndFetch()
   }
 
-  function setActiveTab(tab) {
-    activeTab.value = tab
+  function setSelectedGroup(groupName) {
+    selectedGroup.value = groupName
+  }
+
+  async function fetchStockData() {
+    stockSummaries.value = await getStockSummaries()
+    unheldStocks.value = await getUnheldStocks()
   }
 
   async function resetAndFetch() {
     cursor.value = null
     journals.value = []
     await fetchJournals({ isInitial: true })
+    await fetchStockData()
   }
 
   async function fetchJournals({ isInitial = false } = {}) {
@@ -118,6 +129,32 @@ export const useJournalStore = defineStore('journal', () => {
     await resetAndFetch()
     return response
   }
+
+  const unheldStockCount = computed(() => unheldStocks.value.length)
+
+  const availableGroups = computed(() => {
+    const groupsSet = new Set(['전체'])
+    stockSummaries.value.forEach((item) => {
+      if (item.groupTag) groupsSet.add(item.groupTag)
+    })
+    return Array.from(groupsSet)
+  })
+
+  const filteredStockSummaries = computed(() => {
+    const queryStr = debouncedQuery.value.trim().toLowerCase()
+    return stockSummaries.value.filter((item) => {
+      if (selectedGroup.value !== '전체' && item.groupTag !== selectedGroup.value) {
+        return false
+      }
+      if (queryStr) {
+        const matchName = item.stockName?.toLowerCase().includes(queryStr)
+        const matchTag = item.groupTag?.toLowerCase().includes(queryStr)
+        const matchJudgment = item.latestJudgment?.toLowerCase().includes(queryStr)
+        if (!matchName && !matchTag && !matchJudgment) return false
+      }
+      return true
+    })
+  })
 
   const monthlySummary = computed(() => {
     const periodJournals = allMonthlyJournals.value
@@ -214,54 +251,12 @@ export const useJournalStore = defineStore('journal', () => {
     return Array.from(groupsMap.values())
   })
 
-  const stockGroupedJournals = computed(() => {
-    const groupsMap = new Map()
-
-    journals.value.forEach((item) => {
-      const stockName = item.stock || '기타'
-      if (!groupsMap.has(stockName)) {
-        groupsMap.set(stockName, {
-          stockName,
-          items: [],
-        })
-      }
-
-      let actionTypeLabel = item.type || '매수'
-      let actionType = 'buy'
-
-      if (item.investmentAction === 'SELL' || item.type === '매도') {
-        actionTypeLabel = '매도'
-        actionType = 'sell'
-      } else if (item.investmentAction === 'HOLD' || item.type === '추가 의견') {
-        actionTypeLabel = '추가 의견'
-        actionType = 'hold'
-      }
-
-      const returnRate = item.returnRate ?? 0
-      const returnRateClass =
-        returnRate > 0 ? 'text-[#E34B4B]' : returnRate < 0 ? 'text-[#3976D9]' : 'text-[#666662]'
-
-      groupsMap.get(stockName).items.push({
-        ...item,
-        time: formatTime(item.createdAt),
-        actionTypeLabel,
-        actionType,
-        formattedUnitPrice: (item.unitPrice ?? 0).toLocaleString(),
-        returnRate,
-        returnRateClass,
-      })
-    })
-
-    return Array.from(groupsMap.values())
-  })
-
   return {
     journals,
     allMonthlyJournals,
     selectedJournal,
     selectedVersion,
     selectedPeriod,
-    activeTab,
     searchQuery,
     debouncedQuery,
     cursor,
@@ -269,12 +264,18 @@ export const useJournalStore = defineStore('journal', () => {
     totalCount,
     isLoading,
     isLoadingMore,
+    stockSummaries,
+    unheldStocks,
+    selectedGroup,
+    unheldStockCount,
+    availableGroups,
+    filteredStockSummaries,
+    setSelectedGroup,
+    fetchStockData,
     monthlySummary,
     dateGroupedJournals,
-    stockGroupedJournals,
     setSearchQuery,
     setPeriod,
-    setActiveTab,
     fetchJournals,
     fetchNextJournals,
     resetAndFetch,

@@ -1,4 +1,8 @@
-import { journalMock } from '@/modules/journal/mocks/journalMock'
+import {
+  journalMock,
+  stockSummariesMock,
+  unheldStocksMock,
+} from '@/modules/journal/mocks/journalMock'
 
 let journals = structuredClone(journalMock)
 
@@ -149,4 +153,28 @@ export async function updateJournal(journalId, payload) {
     versionDate,
     versionAction: 'CREATED',
   }
+}
+
+let stockSummaries = structuredClone(stockSummariesMock)
+let unheldStocks = structuredClone(unheldStocksMock)
+
+export async function getStockSummaries({ groupTag, query } = {}) {
+  const searchKeyword = query?.trim().toLowerCase()
+
+  const filtered = stockSummaries.filter((item) => {
+    if (groupTag && groupTag !== '전체' && item.groupTag !== groupTag) return false
+    if (searchKeyword) {
+      const matchName = item.stockName?.toLowerCase().includes(searchKeyword)
+      const matchTag = item.groupTag?.toLowerCase().includes(searchKeyword)
+      const matchJudgment = item.latestJudgment?.toLowerCase().includes(searchKeyword)
+      if (!matchName && !matchTag && !matchJudgment) return false
+    }
+    return true
+  })
+
+  return structuredClone(filtered)
+}
+
+export async function getUnheldStocks() {
+  return structuredClone(unheldStocks)
 }
