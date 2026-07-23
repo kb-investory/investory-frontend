@@ -2,7 +2,14 @@ import { journalMock } from '@/modules/journal/mocks/journalMock'
 
 let journals = structuredClone(journalMock)
 
-export async function getJournals({ stockId, period, query, cursor, limit, withPagination = false } = {}) {
+export async function getJournals({
+  stockId,
+  period,
+  query,
+  cursor,
+  limit,
+  withPagination = false,
+} = {}) {
   const searchKeyword = query?.trim().toLowerCase()
 
   const filteredJournals = journals.filter((journal) => {
@@ -11,7 +18,9 @@ export async function getJournals({ stockId, period, query, cursor, limit, withP
     if (searchKeyword) {
       const matchStock = journal.stock?.toLowerCase().includes(searchKeyword)
       const matchTitle = journal.title?.toLowerCase().includes(searchKeyword)
-      const matchContent = (journal.content || journal.judgment)?.toLowerCase().includes(searchKeyword)
+      const matchContent = (journal.content || journal.judgment)
+        ?.toLowerCase()
+        .includes(searchKeyword)
       const matchReasons = journal.reasons?.some((r) => r.toLowerCase().includes(searchKeyword))
       if (!matchStock && !matchTitle && !matchContent && !matchReasons) return false
     }

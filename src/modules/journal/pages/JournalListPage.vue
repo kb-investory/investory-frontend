@@ -99,7 +99,9 @@ function goToCreate() {
         <section class="monthly-summary" aria-label="월간 기록 요약">
           <div class="summary-item">
             <span class="summary-label">{{ summaryMonthLabel }}</span>
-            <span class="summary-value font-mono">{{ journalStore.monthlySummary.monthlyCount }}개</span>
+            <span class="summary-value font-mono"
+              >{{ journalStore.monthlySummary.monthlyCount }}개</span
+            >
           </div>
 
           <div class="summary-item summary-item--border">
@@ -117,15 +119,15 @@ function goToCreate() {
 
           <div class="summary-item summary-item--border">
             <span class="summary-label">추가 의견</span>
-            <span class="summary-value font-mono">{{ journalStore.monthlySummary.additionalOpinionCount }}개</span>
+            <span class="summary-value font-mono"
+              >{{ journalStore.monthlySummary.additionalOpinionCount }}개</span
+            >
           </div>
         </section>
 
         <!-- 날짜별 / 종목별 타임라인 목록 -->
         <main class="timeline-list">
-          <div v-if="journalStore.isLoading" class="state-message">
-            일지를 불러오는 중입니다...
-          </div>
+          <div v-if="journalStore.isLoading" class="state-message">일지를 불러오는 중입니다...</div>
 
           <template v-else-if="journalStore.journals.length > 0">
             <!-- 타임라인 탭 -->
@@ -184,16 +186,16 @@ function goToCreate() {
                 :disabled="journalStore.isLoadingMore"
                 @click="journalStore.fetchNextJournals"
               >
-                <span>{{ journalStore.isLoadingMore ? '일지 불러오는 중...' : '이전 일지 더보기' }}</span>
+                <span>{{
+                  journalStore.isLoadingMore ? '일지 불러오는 중...' : '이전 일지 더보기'
+                }}</span>
                 <AppIcon name="chevron-down" :size="14" />
               </button>
             </div>
           </template>
 
           <!-- 비어있는 상태 -->
-          <div v-else class="state-message">
-            등록된 투자 일지가 없습니다.
-          </div>
+          <div v-else class="state-message">등록된 투자 일지가 없습니다.</div>
         </main>
 
         <!-- 일지 추가 액션 버튼 -->

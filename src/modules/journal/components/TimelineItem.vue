@@ -38,9 +38,7 @@ defineProps({
         </span>
       </div>
 
-      <h3 class="timeline-item__title">
-        {{ item.stock }} · {{ item.title }}
-      </h3>
+      <h3 class="timeline-item__title">{{ item.stock }} · {{ item.title }}</h3>
 
       <div class="timeline-item__metric">
         <span class="timeline-item__unit-price">
