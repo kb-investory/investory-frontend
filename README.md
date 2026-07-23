@@ -147,6 +147,7 @@ Page/Component → Pinia Store → Service → Mock 또는 실제 API
 - [코딩 및 Git 컨벤션](./docs/coding-convention.md)
 - [프로젝트 디렉터리 구조](./docs/project-structure.md)
 - [공통 UI 컴포넌트](./docs/ui-components.md)
+- [API 계약 초안](./docs/api-contract.md)
 
 ## CI/CD
 
@@ -161,4 +162,10 @@ Page/Component → Pinia Store → Service → Mock 또는 실제 API
 
 ## UI Kit 확인
 
-현재 홈(`/`)은 공통 컴포넌트 전체를 확인하는 UI Kit 화면으로 연결되어 있습니다. `/ui-kit` 주소에서도 같은 화면을 확인할 수 있습니다.
+홈(`/`)은 `HomePage`로 연결되어 있습니다. 공통 컴포넌트를 확인하는 UI Kit은 `/ui-kit`에서 확인할 수 있습니다.
+
+## 테스트 (추후 도입)
+
+<!-- TODO: Vitest로 service/store 단위 테스트를 추가한다. -->
+<!-- TODO: Playwright로 로그인 → 홈 → 투자일지 작성 핵심 흐름 E2E를 추가한다. -->
+<!-- TODO: CI에 단위 테스트와 E2E 실행 조건을 추가한다. -->

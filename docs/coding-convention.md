@@ -54,7 +54,7 @@ main ──────●──────────────●───
 
 - **머지 방식**: 무조건 Squash merge. squash 머지 시 PR 제목이 최종 커밋 메시지가 되므로, PR 제목도 커밋 컨벤션을 그대로 적용한다.
 - **리뷰**: 최소 1명 이상 승인 필수, self-merge 금지
-- **CI**: 현재 미설정 (개발 초기 단계). 대신 리뷰어가 머지 전 로컬에서 빌드/실행 확인. 프로젝트 안정화 후 GitHub Actions 등으로 최소 빌드 체크 도입 권장
+- **CI**: `main` 대상 PR과 `main` push에서 lint, format, build를 검사한다. `develop` 보호 규칙에 CI를 필수로 연결하려면 workflow의 trigger에 `develop` PR을 추가한 뒤 GitHub branch protection에서 해당 check를 선택한다.
 - **PR 크기**: 숫자로 제한하지 않으나, 가능하면 작은 단위로 쪼개는 것을 권장
 
 ## 4. 커밋 / PR 제목 컨벤션 (Conventional Commits)
@@ -196,6 +196,7 @@ labels: enhancement
 
 ## 향후 검토 항목
 
-- CI/CD 파이프라인 도입 (branch protection에 빌드 성공 조건 추가)
+- `develop` 대상 CI 실행 및 branch protection의 빌드 성공 조건 연결
+- Vitest 단위 테스트와 Playwright E2E 테스트 도입
 - CHANGELOG 자동화 도구 도입
 - 팀 규모 확대 시 리뷰어 수, PR 크기 제한 재검토
