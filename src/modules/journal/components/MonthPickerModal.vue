@@ -93,11 +93,21 @@ function applySelection() {
 
         <!-- 연도 선택 -->
         <div class="year-selector">
-          <button class="year-arrow-btn" type="button" aria-label="이전 연도" @click="changeYear(-1)">
+          <button
+            class="year-arrow-btn"
+            type="button"
+            aria-label="이전 연도"
+            @click="changeYear(-1)"
+          >
             <AppIcon name="chevron-left" :size="18" />
           </button>
           <span class="year-text">{{ tempYear }}년</span>
-          <button class="year-arrow-btn" type="button" aria-label="다음 연도" @click="changeYear(1)">
+          <button
+            class="year-arrow-btn"
+            type="button"
+            aria-label="다음 연도"
+            @click="changeYear(1)"
+          >
             <AppIcon name="chevron-right" :size="18" />
           </button>
         </div>
@@ -148,9 +158,7 @@ function applySelection() {
 
         <!-- 모달 액션 -->
         <footer class="modal-actions">
-          <button class="btn-cancel" type="button" @click="emit('close')">
-            취소
-          </button>
+          <button class="btn-cancel" type="button" @click="emit('close')">취소</button>
           <button class="btn-apply" type="button" @click="applySelection">
             {{ tempYear }}년 {{ tempMonth }}월 보기
           </button>

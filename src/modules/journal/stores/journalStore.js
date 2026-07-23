@@ -197,7 +197,8 @@ export const useJournalStore = defineStore('journal', () => {
       }
 
       const returnRate = item.returnRate ?? 0
-      const returnRateClass = returnRate > 0 ? 'text-[#E34B4B]' : returnRate < 0 ? 'text-[#3976D9]' : 'text-[#666662]'
+      const returnRateClass =
+        returnRate > 0 ? 'text-[#E34B4B]' : returnRate < 0 ? 'text-[#3976D9]' : 'text-[#666662]'
 
       groupsMap.get(dateKey).items.push({
         ...item,
@@ -237,7 +238,8 @@ export const useJournalStore = defineStore('journal', () => {
       }
 
       const returnRate = item.returnRate ?? 0
-      const returnRateClass = returnRate > 0 ? 'text-[#E34B4B]' : returnRate < 0 ? 'text-[#3976D9]' : 'text-[#666662]'
+      const returnRateClass =
+        returnRate > 0 ? 'text-[#E34B4B]' : returnRate < 0 ? 'text-[#3976D9]' : 'text-[#666662]'
 
       groupsMap.get(stockName).items.push({
         ...item,
