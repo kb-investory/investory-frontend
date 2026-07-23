@@ -1,3 +1,8 @@
+/**
+ * [Service] 투자일지 비즈니스 API 서비스 레이어
+ * - 사용 위치: journalStore.js 및 모듈 전반
+ * - 주요 기능: getJournals(필터/커서페이징), getStockSummaries(그룹/검색), 일지 생성/수정
+ */
 import {
   journalMock,
   stockSummariesMock,

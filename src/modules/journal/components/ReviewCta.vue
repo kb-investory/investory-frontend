@@ -1,3 +1,8 @@
+<!-- 
+  [컴포넌트] 복기 작성 유도 CTA 배너
+  - 사용 위치: UIKitView.vue 및 향후 일지 상세/복기 권유 영역
+  - 주요 기능: "아직 작성한 복기가 없어요" 문구 및 "복기 작성 >" 버튼 제공
+-->
 <script setup>
 import AppIcon from '@/shared/components/AppIcon.vue'
 

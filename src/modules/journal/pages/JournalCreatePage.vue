@@ -1,3 +1,9 @@
+<!-- 
+  [페이지 컴포넌트] 투자일지 작성 페이지
+  - 경로: /journal/create
+  - 사용 위치: 타임라인/종목별 하단 '일지 추가' FAB 버튼 클릭 시 이동하는 화면
+  - 주요 기능: 투자 일지 작성 및 폼 제출(JournalForm)
+-->
 <script setup>
 import { useRouter } from 'vue-router'
 

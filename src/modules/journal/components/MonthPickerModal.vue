@@ -1,3 +1,8 @@
+<!-- 
+  [컴포넌트] 3D 휠 연월 선택 피커 모달
+  - 사용 위치: JournalTimelineListPage.vue 헤더 '2026. 07 ∨' 버튼 클릭 시 팝업
+  - 주요 기능: 연도 조절(◀ 2026년 ▶), 휠 스크롤/터치 감지 오파시티 피커, 선택 월 변경 이벤트 발송
+-->
 <script setup>
 import { computed, ref, watch } from 'vue'
 

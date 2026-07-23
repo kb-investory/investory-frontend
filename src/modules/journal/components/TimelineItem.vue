@@ -1,3 +1,8 @@
+<!-- 
+  [컴포넌트] 타임라인 개별 일지 항목 카드
+  - 사용 위치: JournalTimelineListPage.vue (타임라인 목록 전용)
+  - 주요 기능: 타임라인 수직 연결선, 매매 유형 배지(매수/매도/추가의견), 종목명/제목, 단가 및 수익률 렌더링
+-->
 <script setup>
 defineProps({
   item: {

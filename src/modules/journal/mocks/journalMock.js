@@ -1,3 +1,8 @@
+/**
+ * [Mock] 투자일지 테스트용 샘플 데이터 세트
+ * - 사용 위치: journalService.js
+ * - 주요 기능: 타임라인 일지 목록(journalMock), 종목 요약(stockSummariesMock), 미보유 종목(unheldStocksMock)
+ */
 export const journalMock = [
   {
     journalId: 101,

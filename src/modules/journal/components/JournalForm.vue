@@ -1,3 +1,8 @@
+<!-- 
+  [컴포넌트] 투자일지 작성/수정 폼
+  - 사용 위치: JournalCreatePage.vue (일지 작성 전용)
+  - 주요 기능: 종목 선택, 매매 유형, 작성 내용/이유 입력 폼
+-->
 <script setup>
 import { reactive } from 'vue'
 

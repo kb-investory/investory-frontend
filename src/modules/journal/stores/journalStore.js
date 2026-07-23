@@ -1,3 +1,8 @@
+/**
+ * [Pinia Store] 투자일지 전역 상태 관리 스토어
+ * - 사용 위치: JournalTimelineListPage, JournalStockListPage 등 모듈 전반
+ * - 주요 기능: 타임라인 목록, 종목 요약 데이터, 검색어 디바운싱, 날짜별 그룹화, 월간 요약 집계
+ */
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 

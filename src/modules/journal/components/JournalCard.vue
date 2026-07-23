@@ -1,3 +1,8 @@
+<!-- 
+  [컴포넌트] 일지 상세 내역 카드 (복기/버전 정보)
+  - 사용 위치: UIKitView.vue 및 향후 투자일지 상세 보기/버전 이력 화면
+  - 주요 기능: 일지 버전, 제목, 판단 요약, 이유/근거 목록, 복기 조건 렌더링
+-->
 <script setup>
 import AppIcon from '@/shared/components/AppIcon.vue'
 import BaseBadge from '@/shared/components/BaseBadge.vue'

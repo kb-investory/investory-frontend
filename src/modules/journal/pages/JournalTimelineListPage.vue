@@ -1,3 +1,9 @@
+<!-- 
+  [페이지 컴포넌트] 투자일지 - 타임라인 목록 페이지
+  - 경로: /journal
+  - 사용 위치: 주 메뉴 '투자일지' 탭 진입 시 기본 렌더링되는 메인 화면
+  - 주요 기능: 월 선택 모달, 월간 실적 요약, 날짜별 타임라인 목록(TimelineItem), 커서 페이징 더보기
+-->
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'

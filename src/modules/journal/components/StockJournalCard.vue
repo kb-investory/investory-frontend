@@ -1,3 +1,8 @@
+<!-- 
+  [컴포넌트] 종목별 개별 일지 요약 카드
+  - 사용 위치: JournalStockListPage.vue (종목별 목록 전용)
+  - 주요 기능: 종목명, 그룹 테마(· 반도체 등), 최근 판단 요약, 작성시점/일지수, 평단가, 수익률, 보유일수 렌더링
+-->
 <script setup>
 import { computed } from 'vue'
 

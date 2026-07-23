@@ -1,3 +1,9 @@
+<!-- 
+  [페이지 컴포넌트] 투자일지 - 종목별 목록 페이지
+  - 경로: /journal/stocks
+  - 사용 위치: 투자일지 상단 '종목별' 탭 클릭 시 이동하는 화면
+  - 주요 기능: 미보유 종목 배지, 사용자 종목 그룹 필터 칩 바, 종목 요약 카드(StockJournalCard) 목록
+-->
 <script setup>
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
