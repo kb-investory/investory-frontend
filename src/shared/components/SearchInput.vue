@@ -8,11 +8,16 @@ defineProps({
     type: String,
     default: '검색어를 입력하세요',
   },
+  variant: {
+    type: String,
+    default: 'filled',
+    validator: (value) => ['filled', 'outlined'].includes(value),
+  },
 })
 </script>
 
 <template>
-  <label class="search-input">
+  <label class="search-input" :class="`search-input--${variant}`">
     <AppIcon name="search" :size="18" />
     <span class="sr-only">검색</span>
     <input v-model="model" type="search" :placeholder="placeholder" />
@@ -30,6 +35,18 @@ defineProps({
   border-radius: 12px;
   background: var(--color-surface-subtle);
   color: var(--color-text-subtle);
+}
+
+.search-input--outlined {
+  height: 50px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+}
+
+.search-input:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-subtle);
 }
 
 .search-input input {

@@ -26,9 +26,9 @@ defineProps({
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
-  background: var(--color-surface);
+  background: var(--color-background);
   color: var(--color-heading);
-  font-family: Inter, system-ui, sans-serif;
+  font-family: var(--font-brand);
   font-size: 12px;
   font-weight: 600;
 }
@@ -50,7 +50,7 @@ defineProps({
   border: 1.5px solid currentColor;
   border-radius: 3px;
   box-shadow:
-    inset -2px 0 0 1px var(--color-surface),
+    inset -2px 0 0 1px var(--color-background),
     inset 12px 0 0 currentColor;
 }
 </style>
