@@ -11,17 +11,21 @@ import {
   Ellipsis,
   History,
   House,
+  Lightbulb,
   LoaderCircle,
   Lock,
   LockKeyhole,
   MessageCircle,
   Notebook,
+  NotebookTabs,
+  Pencil,
   Plus,
   Search,
   Settings,
   ShieldCheck,
   Sparkles,
   TriangleAlert,
+  X,
 } from '@lucide/vue'
 
 const iconComponents = {
@@ -36,17 +40,21 @@ const iconComponents = {
   ellipsis: Ellipsis,
   history: History,
   home: House,
+  lightbulb: Lightbulb,
   'loader-circle': LoaderCircle,
   lock: Lock,
   'lock-keyhole': LockKeyhole,
   'message-circle': MessageCircle,
   notebook: Notebook,
+  'notebook-tabs': NotebookTabs,
+  pencil: Pencil,
   plus: Plus,
   search: Search,
   settings: Settings,
   'shield-check': ShieldCheck,
   sparkles: Sparkles,
   'triangle-alert': TriangleAlert,
+  x: X,
 }
 
 defineProps({

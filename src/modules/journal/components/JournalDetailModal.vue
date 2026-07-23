@@ -65,11 +65,11 @@ const stockName = computed(() => {
 })
 
 const tradeDateTime = computed(() => {
-  if (!props.journal) return '2025. 07. 18  15:32'
+  if (!props.journal) return '2025. 07. 18 15:32'
   if (props.journal.tradeDate) return props.journal.tradeDate
-  const dateStr = props.journal.date || '2025. 07. 18'
-  const timeStr = props.journal.time || '15:32'
-  return `${dateStr}  ${timeStr}`
+  const dateStr = props.journal.date || props.journal.createdDate || '2025. 07. 18'
+  const timeStr = props.journal.time || ''
+  return timeStr ? `${dateStr} ${timeStr}` : dateStr
 })
 
 const judgmentText = computed(() => {
@@ -260,14 +260,14 @@ function handleGoToStockRecords() {
 
 .journal-detail-sheet {
   display: flex;
-  width: min(350px, 92vw);
-  max-height: 90vh;
+  width: min(370px, 94vw);
+  max-height: 88vh;
   flex-direction: column;
   border-radius: 28px;
-  box-shadow: 0 16px 40px rgb(0 0 0 / 18%);
+  box-shadow: 0 20px 48px rgb(0 0 0 / 22%);
   background: #ffffff;
   overflow: hidden;
-  padding: 20px 20px 16px;
+  padding: 22px 22px 18px;
 }
 
 /* 1. 최상단 서브 헤더 */
@@ -275,7 +275,7 @@ function handleGoToStockRecords() {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
   flex-shrink: 0;
 }
 
@@ -363,18 +363,18 @@ function handleGoToStockRecords() {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 20px;
+  gap: 7px;
+  margin-bottom: 22px;
 }
 
 .meta-chip {
   display: inline-flex;
-  height: 28px;
+  height: 30px;
   align-items: center;
   justify-content: center;
-  padding: 0 10px;
+  padding: 0 11px;
   border-radius: 8px;
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 700;
 }
 
@@ -403,11 +403,11 @@ function handleGoToStockRecords() {
 .judgment-card {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 14px 16px;
-  border-radius: 16px;
+  gap: 10px;
+  padding: 16px 18px;
+  border-radius: 18px;
   background: #fff9e7;
-  margin-bottom: 22px;
+  margin-bottom: 24px;
 }
 
 .judgment-card__header {
@@ -416,7 +416,7 @@ function handleGoToStockRecords() {
   gap: 6px;
   color: #a77900;
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 700;
 }
 
@@ -428,17 +428,17 @@ function handleGoToStockRecords() {
   margin: 0;
   color: #181817;
   font-family: var(--font-sans);
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 600;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 /* 6. 판단 근거 리스트 */
 .reasons-section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 14px;
+  margin-bottom: 24px;
 }
 
 .reasons-header {
