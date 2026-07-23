@@ -1,7 +1,7 @@
 <!-- 
   [컴포넌트] 투자일지 상세 정보 모달
   - 사용 위치: JournalTimelineListPage.vue (타임라인 목록에서 항목 클릭 시 팝업)
-  - 주요 기능: 명세 이미지 100% 동일 구현 - 거래 정보 태그 칩, 핵심 판단 카드, 판단 근거 체크리스트, AI 보고서/대화 카드, 복기 메모, 종목 전체 기록 보기
+  - 주요 기능: 명세 디자인 시안 100% 동일 구현 - 거래 정보 태그 칩(매수/20주/평단 78,500원/+8.24%), 핵심 판단 노란 카드, 판단 근거 체크리스트(AI 보고서 3개 배지), 연결된 AI 대화 카드, 복기 메모, 하단 수정 및 종목 전체 기록 보기 액션
 -->
 <script setup>
 import { computed } from 'vue'
@@ -26,24 +26,24 @@ const emit = defineEmits(['close'])
 const router = useRouter()
 
 const formattedUnitPrice = computed(() => {
-  if (!props.journal) return '78,500'
-  return (props.journal.unitPrice ?? 78500).toLocaleString()
+  if (!props.journal || props.journal.unitPrice === undefined) return '78,500'
+  return props.journal.unitPrice.toLocaleString()
 })
 
 const formattedQuantity = computed(() => {
-  if (!props.journal) return '20'
-  return (props.journal.quantity ?? 20).toLocaleString()
+  if (!props.journal || props.journal.quantity === undefined) return '20'
+  return props.journal.quantity.toLocaleString()
 })
 
 const formattedReturnRate = computed(() => {
-  if (!props.journal) return '+8.24%'
-  const rate = props.journal.returnRate ?? 8.24
+  if (!props.journal || props.journal.returnRate === undefined) return '+8.24%'
+  const rate = props.journal.returnRate
   return (rate > 0 ? '+' : '') + rate.toFixed(2) + '%'
 })
 
 const isPositiveReturn = computed(() => {
-  if (!props.journal) return true
-  return (props.journal.returnRate ?? 8.24) >= 0
+  if (!props.journal || props.journal.returnRate === undefined) return true
+  return props.journal.returnRate >= 0
 })
 
 const actionTypeLabel = computed(() => {
@@ -66,10 +66,10 @@ const stockName = computed(() => {
 
 const tradeDateTime = computed(() => {
   if (!props.journal) return '2025. 07. 18  15:32'
-  return (
-    props.journal.tradeDate ||
-    `${props.journal.date || '2025. 07. 18'}  ${props.journal.time || '15:32'}`
-  )
+  if (props.journal.tradeDate) return props.journal.tradeDate
+  const dateStr = props.journal.date || '2025. 07. 18'
+  const timeStr = props.journal.time || '15:32'
+  return `${dateStr}  ${timeStr}`
 })
 
 const judgmentText = computed(() => {
