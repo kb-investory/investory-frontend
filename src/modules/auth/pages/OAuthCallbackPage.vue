@@ -54,7 +54,7 @@ onMounted(async () => {
 
   if (response) {
     redirectTimer = window.setTimeout(() => {
-      router.replace({ name: ROUTE_NAMES.HOME })
+      router.replace({ name: ROUTE_NAMES.BROKER_CONNECT })
     }, 900)
   }
 })
