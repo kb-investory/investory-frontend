@@ -89,7 +89,6 @@ module A → module B 직접 참조 지양
 
 - 1번 담당: `auth`, `home`
 - 2번 담당: `portfolio`, `mypage`
-- 3번 담당: `journal`
-- `ai-conversation`: 담당자 확정 필요
+- 3번 담당: `journal`, `ai-conversation`
 
 `journal-create`는 별도 모듈로 만들지 않고 `journal` 도메인의 페이지로 관리합니다.
