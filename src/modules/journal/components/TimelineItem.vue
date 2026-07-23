@@ -24,7 +24,7 @@ defineProps({
         class="timeline-item__marker"
         :class="`timeline-item__marker--${item.actionType || 'buy'}`"
       />
-      <div v-if="!isLast" class="timeline-item__line" />
+      <div class="timeline-item__line" />
     </div>
 
     <!-- 일지 내용 -->

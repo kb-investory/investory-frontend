@@ -7,7 +7,6 @@ import MonthPickerModal from '@/modules/journal/components/MonthPickerModal.vue'
 import TimelineItem from '@/modules/journal/components/TimelineItem.vue'
 import { useJournalStore } from '@/modules/journal/stores/journalStore'
 import AppIcon from '@/shared/components/AppIcon.vue'
-import BaseButton from '@/shared/components/BaseButton.vue'
 import SearchInput from '@/shared/components/SearchInput.vue'
 
 const router = useRouter()
@@ -177,15 +176,17 @@ function goToCreate() {
               </section>
             </template>
 
-            <!-- 커서 페이징 더보기 버튼 -->
+            <!-- 더보기 버튼 -->
             <div v-if="journalStore.hasMore" class="load-more-section">
-              <BaseButton
-                variant="secondary"
+              <button
+                type="button"
+                class="load-more-btn"
                 :disabled="journalStore.isLoadingMore"
                 @click="journalStore.fetchNextJournals"
               >
-                {{ journalStore.isLoadingMore ? '불러오는 중...' : '더보기 (커서 페이징)' }}
-              </BaseButton>
+                <span>{{ journalStore.isLoadingMore ? '일지 불러오는 중...' : '이전 일지 더보기' }}</span>
+                <AppIcon name="chevron-down" :size="14" />
+              </button>
             </div>
           </template>
 
@@ -433,7 +434,35 @@ function goToCreate() {
 .load-more-section {
   display: flex;
   justify-content: center;
-  padding: 16px 0;
+  padding: 16px 0 8px;
+}
+
+.load-more-btn {
+  display: flex;
+  height: 38px;
+  align-items: center;
+  gap: 6px;
+  padding: 0 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 19px;
+  background: var(--color-surface-subtle);
+  color: var(--color-text-muted);
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.load-more-btn:hover:not(:disabled) {
+  border-color: var(--color-primary-strong);
+  background: var(--color-primary-subtle);
+  color: var(--color-primary-strong);
+}
+
+.load-more-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* 하단 일지 추가 액션 버튼 */
