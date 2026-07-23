@@ -3,6 +3,7 @@ import { onMounted } from 'vue'
 
 import PortfolioAssetComposition from '@/modules/portfolio/components/PortfolioAssetComposition.vue'
 import PortfolioHeader from '@/modules/portfolio/components/PortfolioHeader.vue'
+import PortfolioHoldings from '@/modules/portfolio/components/PortfolioHoldings.vue'
 import { usePortfolioStore } from '@/modules/portfolio/stores/portfolioStore'
 
 const portfolioStore = usePortfolioStore()
@@ -21,5 +22,6 @@ onMounted(async () => {
   <section class="page-section">
     <PortfolioHeader />
     <PortfolioAssetComposition />
+    <PortfolioHoldings />
   </section>
 </template>

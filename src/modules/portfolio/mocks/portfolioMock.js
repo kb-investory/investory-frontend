@@ -10,6 +10,7 @@ export const portfolioMock = {
       holding: 120,
       amount: 16380000,
       weight: 40.1,
+      profitLoss: 560000,
       returnRate: 12.15,
     },
     {
@@ -21,6 +22,7 @@ export const portfolioMock = {
       holding: 5,
       amount: 6357500,
       weight: 25.3,
+      profitLoss: -350000,
       returnRate: -8.07,
     },
     {
@@ -32,6 +34,7 @@ export const portfolioMock = {
       holding: 9,
       amount: 4577400,
       weight: 18.2,
+      profitLoss: 220000,
       returnRate: 6.32,
     },
     {
@@ -43,6 +46,7 @@ export const portfolioMock = {
       holding: 15,
       amount: 4305000,
       weight: 16.4,
+      profitLoss: -70000,
       returnRate: -4.11,
     },
   ],
