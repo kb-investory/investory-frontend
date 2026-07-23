@@ -79,3 +79,41 @@ export const stockAnalysisMocks = [
     },
   },
 ]
+
+export const accountsMock = [
+  { id: 'ALL', name: '전체 계좌', isDefault: true },
+  { id: 'ACC_01', name: 'KB증권 주식계좌', accountNumber: '123-45-67890' },
+  { id: 'ACC_02', name: '한국투자 ISA계좌', accountNumber: '987-65-43210' },
+  { id: 'ACC_03', name: 'NH투자 해외주식계좌', accountNumber: '555-12-34567' },
+]
+
+export const portfolioSummaryMock = {
+  ALL: {
+    statusBadge: '현재 상태',
+    headline: '손실 종목을 한 번 점검할 때예요',
+    totalAmount: 25430000,
+    totalProfit: -1960000,
+    nextAction: '손실 비중 확인',
+  },
+  ACC_01: {
+    statusBadge: '현재 상태',
+    headline: '우량주 중심의 안정적인 수익을 유지하고 있어요',
+    totalAmount: 15320000,
+    totalProfit: 1250000,
+    nextAction: '수익 실현 시점 점검',
+  },
+  ACC_02: {
+    statusBadge: '현재 상태',
+    headline: '손실 종목 비중이 높아지고 있어요',
+    totalAmount: 10110000,
+    totalProfit: -3210000,
+    nextAction: '리밸런싱 검토',
+  },
+  ACC_03: {
+    statusBadge: '현재 상태',
+    headline: '해외 증시 변동성에 주의가 필요해요',
+    totalAmount: 8500000,
+    totalProfit: -450000,
+    nextAction: '환율 및 종목 확인',
+  },
+}
