@@ -3,7 +3,7 @@ export const ROUTE_NAMES = Object.freeze({
   LOGIN: 'login',
   OAUTH_CALLBACK: 'oauth-callback',
   BROKER_CONNECT: 'broker-connect',
-  BROKER_VERIFY: 'broker-verify',
+  BROKER_LOGIN: 'broker-login',
   PORTFOLIO: 'portfolio',
   MYPAGE: 'mypage',
   JOURNAL: 'journal',

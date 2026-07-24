@@ -79,7 +79,6 @@ export const brokerConnectionMocks = [
     providerId: 1,
     providerCode: 'KB_SEC',
     providerName: 'KB증권',
-    loginId: 'investory-user',
     status: 'CONNECTED',
     connectedAt: '2026-07-21T12:40:00+09:00',
   },
