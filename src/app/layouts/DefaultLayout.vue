@@ -1,13 +1,17 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { computed } from 'vue'
+import { RouterLink, RouterView, useRoute } from 'vue-router'
 
 import { ROUTE_NAMES } from '@/app/router/route-names'
+
+const route = useRoute()
+const isAuthLayout = computed(() => route.meta.layout === 'auth')
 </script>
 
 <template>
-  <div class="app-layout">
-    <div class="mobile-container">
-      <header class="app-header">
+  <div class="app-layout" :class="{ 'app-layout--auth': isAuthLayout }">
+    <div class="mobile-container" :class="{ 'mobile-container--auth': isAuthLayout }">
+      <header v-if="!isAuthLayout" class="app-header">
         <div class="header-brand-row">
           <RouterLink class="brand" :to="{ name: ROUTE_NAMES.HOME }">Investory</RouterLink>
         </div>
@@ -20,7 +24,7 @@ import { ROUTE_NAMES } from '@/app/router/route-names'
         </nav>
       </header>
 
-      <main class="app-main">
+      <main class="app-main" :class="{ 'app-main--auth': isAuthLayout }">
         <RouterView />
       </main>
     </div>
@@ -100,6 +104,25 @@ import { ROUTE_NAMES } from '@/app/router/route-names'
   flex: 1;
   width: 100%;
   padding: 20px 16px 32px;
+}
+
+.app-layout--auth,
+.mobile-container--auth,
+.app-main--auth {
+  min-height: 100svh;
+}
+
+.app-layout--auth {
+  background-color: #ffffff;
+}
+
+.mobile-container--auth {
+  max-width: none;
+  box-shadow: none;
+}
+
+.app-main--auth {
+  padding: 0;
 }
 
 @media (max-width: 480px) {

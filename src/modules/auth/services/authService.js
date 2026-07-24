@@ -1,27 +1,28 @@
-import { authMock, authTokenMock, oauthAuthorizationMock } from '@/modules/auth/mocks/authMock'
+import { request } from '@/shared/api/client'
 
-export async function getOauthAuthorizationUrl() {
-  return structuredClone(oauthAuthorizationMock)
+export function getOauthAuthorizationUrl({ provider, redirectUri, state }) {
+  const searchParams = new URLSearchParams({ redirectUri, state })
+
+  return request(`/auth/oauth/${encodeURIComponent(provider)}/authorize?${searchParams.toString()}`)
 }
 
-export async function completeOauth() {
-  return {
-    ...structuredClone(authTokenMock),
-    user: structuredClone(authMock),
-  }
+export function completeOauth({ provider, code, state, redirectUri }) {
+  return request(`/auth/oauth/${encodeURIComponent(provider)}/callback`, {
+    method: 'POST',
+    body: JSON.stringify({ code, state, redirectUri }),
+  })
 }
 
-export async function refreshAccessToken() {
-  return {
-    ...structuredClone(authTokenMock),
-    accessToken: 'mock-refreshed-access-token',
-  }
+export function refreshAccessToken(refreshToken) {
+  return request('/auth/token/refresh', {
+    method: 'POST',
+    body: JSON.stringify({ refreshToken }),
+  })
 }
 
-export async function logout() {
-  return { success: true }
-}
-
-export async function login() {
-  return structuredClone(authMock)
+export function logout(refreshToken) {
+  return request('/auth/logout', {
+    method: 'POST',
+    body: JSON.stringify({ refreshToken }),
+  })
 }

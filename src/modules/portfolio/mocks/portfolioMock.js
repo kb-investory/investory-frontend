@@ -6,10 +6,11 @@ export const portfolioMock = {
       stockId: 1,
       stockCode: '005930',
       name: '삼성전자',
-      sector: '전기전자',
+      sector: '반도체',
       holding: 120,
       amount: 10320000,
       weight: 25.28,
+      profitLoss: 560000,
       returnRate: 8.4,
     },
     {
@@ -21,6 +22,7 @@ export const portfolioMock = {
       holding: 45,
       amount: 9720000,
       weight: 23.81,
+      profitLoss: -350000,
       returnRate: 4.1,
     },
     {
@@ -32,6 +34,7 @@ export const portfolioMock = {
       holding: 60,
       amount: 20780000,
       weight: 50.91,
+      profitLoss: 220000,
       returnRate: 12.7,
     },
   ],
