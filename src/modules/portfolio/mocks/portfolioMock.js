@@ -6,7 +6,7 @@ export const portfolioMock = {
       stockId: 1,
       stockCode: '005930',
       name: '삼성전자',
-      sector: '전기전자',
+      sector: '반도체',
       holding: 120,
       amount: 10320000,
       weight: 25.28,
