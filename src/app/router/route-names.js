@@ -6,6 +6,8 @@ export const ROUTE_NAMES = Object.freeze({
   BROKER_VERIFY: 'broker-verify',
   PORTFOLIO: 'portfolio',
   MYPAGE: 'mypage',
+  MYPAGE_EDIT: 'mypage-edit',
+  MYPAGE_ACCOUNTS: 'mypage-accounts',
   JOURNAL: 'journal',
   JOURNAL_CREATE: 'journal-create',
   AI_CONVERSATION: 'ai-conversation',
