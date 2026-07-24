@@ -1,20 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 
-const brokerMarks = Object.freeze({
-  KIWOOM: 'KW',
-  MIRAE_ASSET: 'MA',
-  KIS: 'KI',
-  NH_SEC: 'NH',
-  SAMSUNG_SEC: 'SS',
-  KB_SEC: 'KB',
-  SHINHAN_SEC: 'SH',
-  HANA_SEC: 'HN',
-  TOSS_SEC: 'TS',
-  KAKAOPAY_SEC: 'KP',
-  DAISHIN_SEC: 'DS',
-  YUANTA_SEC: 'YA',
-})
+import { getBrokerMark } from '@/modules/auth/utils/brokerMark'
 
 const props = defineProps({
   broker: {
@@ -29,9 +16,7 @@ const props = defineProps({
 
 defineEmits(['select'])
 
-const brokerMark = computed(
-  () => brokerMarks[props.broker.providerCode] ?? props.broker.providerCode.slice(0, 2),
-)
+const brokerMark = computed(() => getBrokerMark(props.broker.providerCode))
 </script>
 
 <template>

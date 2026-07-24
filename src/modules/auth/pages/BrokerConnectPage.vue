@@ -33,13 +33,13 @@ function goBack() {
   router.push({ name: ROUTE_NAMES.LOGIN })
 }
 
-function goToVerification() {
+function goToLogin() {
   if (!brokerStore.selectedProvider) {
     return
   }
 
   router.push({
-    name: ROUTE_NAMES.BROKER_VERIFY,
+    name: ROUTE_NAMES.BROKER_LOGIN,
     query: { providerId: brokerStore.selectedProvider.providerId },
   })
 }
@@ -108,11 +108,7 @@ watch(searchQuery, (query) => loadBrokers(query), { immediate: true })
         </aside>
 
         <div class="broker-action">
-          <BaseButton
-            full-width
-            :disabled="!brokerStore.selectedProvider"
-            @click="goToVerification"
-          >
+          <BaseButton full-width :disabled="!brokerStore.selectedProvider" @click="goToLogin">
             {{
               brokerStore.selectedProvider
                 ? `${brokerStore.selectedProvider.providerName} 연결하기`
@@ -120,7 +116,7 @@ watch(searchQuery, (query) => loadBrokers(query), { immediate: true })
             }}
             <template #icon><AppIcon name="arrow-right" :size="18" /></template>
           </BaseButton>
-          <p>다음 단계에서 본인 인증을 진행해요</p>
+          <p>다음 단계에서 증권사 로그인을 진행해요</p>
         </div>
       </main>
     </div>

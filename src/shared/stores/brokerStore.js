@@ -13,6 +13,8 @@ export const useBrokerStore = defineStore('broker', () => {
   const selectedConnection = ref(null)
   const loading = ref(false)
   const error = ref(null)
+  const connectionStatus = ref('idle')
+  const connectionError = ref('')
 
   async function fetchBrokers(query) {
     loading.value = true
@@ -43,13 +45,34 @@ export const useBrokerStore = defineStore('broker', () => {
   }
 
   async function connectBroker(payload) {
-    const response = await createBrokerConnection(payload)
+    connectionStatus.value = 'loading'
+    connectionError.value = ''
 
-    if (response.connectionId) {
+    try {
+      const response = await createBrokerConnection(payload)
+
+      if (!response.connectionId || response.status === 'FAILED') {
+        throw new Error('증권사 로그인 정보를 확인해 주세요.')
+      }
+
       selectedConnection.value = await getBrokerConnection(response.connectionId)
+      connectionStatus.value = 'success'
+      return response
+    } catch (requestError) {
+      selectedConnection.value = null
+      connectionStatus.value = 'error'
+      connectionError.value =
+        requestError instanceof Error
+          ? requestError.message
+          : '증권사 로그인 중 오류가 발생했습니다.'
+      throw requestError
     }
+  }
 
-    return response
+  function resetConnectionState() {
+    selectedConnection.value = null
+    connectionStatus.value = 'idle'
+    connectionError.value = ''
   }
 
   async function fetchConnection(connectionId) {
@@ -63,10 +86,13 @@ export const useBrokerStore = defineStore('broker', () => {
     selectedConnection,
     loading,
     error,
+    connectionStatus,
+    connectionError,
     fetchBrokers,
     selectBroker,
     clearSelectedBroker,
     connectBroker,
+    resetConnectionState,
     fetchConnection,
   }
 })

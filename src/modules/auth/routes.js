@@ -20,9 +20,9 @@ export const authRoutes = [
     meta: { title: '증권사 선택', layout: 'auth' },
   },
   {
-    path: '/broker-connect/verify',
-    name: ROUTE_NAMES.BROKER_VERIFY,
-    component: () => import('@/modules/auth/pages/BrokerVerificationPage.vue'),
-    meta: { title: '본인 인증', layout: 'auth' },
+    path: '/broker-connect/login',
+    name: ROUTE_NAMES.BROKER_LOGIN,
+    component: () => import('@/modules/auth/pages/BrokerLoginPage.vue'),
+    meta: { title: '증권사 로그인', layout: 'auth' },
   },
 ]
