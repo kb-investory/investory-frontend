@@ -317,7 +317,7 @@ function formatProfitCurrency(value) {
 
 .yellow-accent-bar {
   width: 4px;
-  background-color: #facc15; /* 높이는 원래대로 두고 색상만 변경 */
+  background-color: #f59e0b;
   border-radius: 2px;
   flex-shrink: 0;
 }
